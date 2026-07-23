@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Keyword Manager - TenderIQ AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#1b1b1d",
+                        "surface-tint": "#565e74",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#c4c6d1",
+                        "secondary-fixed": "#e1e2ed",
+                        "on-secondary-container": "#60626c",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "on-background": "#1b1b1d",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#bec6e0",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#191b24",
+                        "inverse-surface": "#303032",
+                        "error": "#ba1a1a",
+                        "surface": "#fcf8fa",
+                        "surface-variant": "#e4e2e4",
+                        "on-primary-fixed": "#131b2e",
+                        "on-secondary-fixed-variant": "#444650",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#dedfeb",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "on-error": "#ffffff",
+                        "tertiary": "#000000",
+                        "on-tertiary-container": "#98805d",
+                        "on-primary-container": "#7c839b",
+                        "surface-bright": "#fcf8fa",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "inverse-on-surface": "#f3f0f2",
+                        "primary-container": "#131b2e",
+                        "primary": "#000000",
+                        "on-surface-variant": "#45464d",
+                        "surface-container-high": "#eae7e9",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-primary": "#ffffff",
+                        "secondary": "#5c5e68",
+                        "outline-variant": "#c6c6cd",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f0edef",
+                        "surface-container-low": "#f6f3f5",
+                        "tertiary-container": "#271901",
+                        "outline": "#76777d",
+                        "surface-container-highest": "#e4e2e4",
+                        "on-tertiary-fixed": "#271901",
+                        "surface-dim": "#dcd9db",
+                        "primary-fixed": "#dae2fd",
+                        "background": "#fcf8fa",
+                        "tertiary-fixed": "#fcdeb5",
+                        "insight-purple": "#8a2be2",
+                        "insight-purple-light": "rgba(138, 43, 226, 0.1)",
+                        "ai-blue": "#007BFF",
+                        "ai-blue-glow": "rgba(0, 123, 255, 0.2)"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "xxl": "48px",
+                        "unit": "8px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "gutter": "24px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-sm": ["Geist"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "label-md": ["Geist"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .ai-glow {
+            box-shadow: inset 0 0 10px rgba(138, 43, 226, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #e4e2e4;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-surface-container border-r border-outline-variant flex flex-col h-full py-xl px-md docked h-screen w-64 left-0 top-0 z-40 hidden md:flex shrink-0">
+<div class="mb-xl px-md flex items-center gap-sm">
+<img class="w-8 h-8 object-contain rounded-md" data-alt="A minimalist, geometric logo for a high-tech AI enterprise procurement platform. The logo should use dark navy and a subtle vibrant purple gradient, symbolizing intelligent data analysis. The style is clean, modern, flat vector art suitable for a light mode dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC02jdPzBrouiC3O-cs-nzUeMXSAePMA06DnHa3q2HVOJrCkVS1_NB5SPYGK5vJXPHNwbD-pYNJcIHW5rYCvhYiCaPVLw0dVLJ3z8hqQ0u-N4y1CckG6f5TeaZD8WS3yxu_aNpy3x404mC5ihKluQBRooECWAY5UA3snNR3tiNG-xn0gxhS7KszY48RywH6Avm2Seqzb3D2mCbG5waLdFJrrfjDFnEvdv9RK_Z6G3PNu2UrZt8iSEo_HNxaHb1mZ6VXBA9usCJbaVw"/>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">TenderIQ AI</h1>
+<p class="font-label-sm text-label-sm text-secondary">Enterprise Intelligence</p>
+</div>
+</div>
+<ul class="flex-1 space-y-xs overflow-y-auto custom-scrollbar">
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-variant transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-variant transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="font-label-md text-label-md">Tender Intelligence</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-variant transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">business_center</span>
+<span class="font-label-md text-label-md">Organizations</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-variant transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+<span class="font-label-md text-label-md">AI Analysis</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-primary font-bold bg-surface-variant transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-variant transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto pt-lg">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:bg-primary/90 transition-colors">
+                Upgrade to Pro
+            </button>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col h-full overflow-hidden relative bg-surface-lowest">
+<!-- TopNavBar -->
+<header class="bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm flex justify-between items-center w-full px-xl h-16 sticky top-0 z-30">
+<div class="flex items-center gap-md flex-1">
+<div class="relative w-64 hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-sm pl-10 pr-md font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-ai-blue focus:ring-2 focus:ring-ai-blue/20 transition-all placeholder:text-outline" placeholder="Global Keyword Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:text-primary cursor-pointer p-xs rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary cursor-pointer p-xs rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]">apps</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden ml-sm cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A clean, professional headshot avatar of a corporate user, facing forward with a neutral expression. Soft studio lighting, plain light gray background. Used in a light mode enterprise application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3cJRm6AVKIovy1cjGTvwyNIX9U1F_F_-ExQDIvemfGZTpvFC4B2OM6vxcGNtm0ZWuZEHG1EX0Mn7FKPXgJzc0suxc2P9AmoJpzH1KMYdE-wfap4V6FbHl09lqnUoJUmvLfCtbk6zHbpp43oQz6679PXERVHLF_u6DzarMy_-jsxiEI05BDzS_I9xHEfAYja0y4Kdikm0EX9Ri1uJ4xTtGq4PE1o1q9y6y7N2RtI2ltuQ4UYGDFFBVFBL9MyQoiJGx797KvFoY3v8"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-1 overflow-auto p-lg md:p-xl custom-scrollbar flex flex-col gap-lg">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Keyword Manager</h2>
+<p class="font-body-md text-body-md text-secondary">Manage and optimize semantic search constraints for procurement intelligence.</p>
+</div>
+<div class="flex gap-sm">
+<button class="bg-surface border border-outline-variant text-secondary font-label-md text-label-md px-md py-sm rounded-lg hover:bg-surface-variant transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export List
+                    </button>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-md py-sm rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-xs shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Keyword
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg flex-1 min-h-0">
+<!-- Left Panel: Groups -->
+<div class="lg:col-span-3 flex flex-col gap-md">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-[0_4px_12px_rgba(15,23,42,0.03)] h-full flex flex-col">
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Categories</h3>
+<button class="text-secondary hover:text-primary p-xs"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+</div>
+<div class="relative mb-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full bg-surface-container border border-outline-variant rounded-lg py-1.5 pl-9 pr-3 text-sm text-on-surface focus:outline-none focus:border-ai-blue transition-all" placeholder="Filter groups..." type="text"/>
+</div>
+<ul class="flex-1 overflow-y-auto custom-scrollbar space-y-xs pr-xs">
+<li>
+<button class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg bg-surface-variant border border-outline-variant">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px] text-primary">school</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">E-learning</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary bg-surface rounded-full px-2 py-0.5 border border-outline-variant">42</span>
+</button>
+</li>
+<li>
+<button class="w-full text-left flex items-center justify-between px-sm py-xs rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary">local_hospital</span>
+<span class="font-label-md text-label-md text-secondary">Healthcare IT</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">128</span>
+</button>
+</li>
+<li>
+<button class="w-full text-left flex items-center justify-between px-sm py-xs rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary">account_tree</span>
+<span class="font-label-md text-label-md text-secondary">ERP Systems</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">56</span>
+</button>
+</li>
+<li>
+<button class="w-full text-left flex items-center justify-between px-sm py-xs rounded-lg hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary">security</span>
+<span class="font-label-md text-label-md text-secondary">Cybersecurity</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">89</span>
+</button>
+</li>
+</ul>
+</div>
+</div>
+<!-- Main Panel: Data Table -->
+<div class="lg:col-span-9 flex flex-col gap-md">
+<!-- AI Insight Banner -->
+<div class="glass-panel rounded-xl p-md flex items-start gap-md border-l-2 border-l-insight-purple ai-glow bg-insight-purple-light">
+<span class="material-symbols-outlined text-insight-purple mt-0.5">auto_awesome</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold mb-xs">AI Optimization Suggestion</h4>
+<p class="font-body-sm text-body-sm text-secondary">Adding "LMS" as a mandatory keyword in E-learning could increase tender match accuracy by 14% based on recent procurement trends.</p>
+</div>
+<button class="ml-auto shrink-0 bg-white border border-outline-variant text-on-surface font-label-sm text-label-sm px-sm py-xs rounded hover:bg-surface-variant transition-colors">Apply</button>
+</div>
+<!-- Table Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-[0_4px_12px_rgba(15,23,42,0.03)] flex-1 flex flex-col overflow-hidden">
+<div class="p-md border-b border-surface-container flex items-center justify-between bg-surface-bright">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">E-learning Keywords</h3>
+<div class="flex gap-sm">
+<button class="p-xs text-secondary hover:text-primary rounded hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">filter_list</span></button>
+<button class="p-xs text-secondary hover:text-primary rounded hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">view_column</span></button>
+</div>
+</div>
+<div class="overflow-x-auto flex-1 custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-bright border-b border-surface-container sticky top-0">
+<tr>
+<th class="py-sm px-md font-label-sm text-label-sm text-secondary font-medium w-8">
+<input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</th>
+<th class="py-sm px-md font-label-sm text-label-sm text-secondary font-medium">Keyword</th>
+<th class="py-sm px-md font-label-sm text-label-sm text-secondary font-medium">Type</th>
+<th class="py-sm px-md font-label-sm text-label-sm text-secondary font-medium">Priority</th>
+<th class="py-sm px-md font-label-sm text-label-sm text-secondary font-medium">Status</th>
+<th class="py-sm px-md font-label-sm text-label-sm text-secondary font-medium text-right">Last Updated</th>
+<th class="py-sm px-md w-12"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container font-body-sm text-body-sm text-on-surface">
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-sm px-md"><input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/></td>
+<td class="py-sm px-md font-medium">Learning Management System</td>
+<td class="py-sm px-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-100 text-blue-800 border border-blue-200">Mandatory</span>
+</td>
+<td class="py-sm px-md">
+<div class="flex items-center gap-xs">
+<div class="h-1.5 w-16 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full"></div>
+</div>
+<span class="text-xs text-secondary">High</span>
+</div>
+</td>
+<td class="py-sm px-md">
+<div class="relative inline-block w-8 h-4 rounded-full bg-primary cursor-pointer">
+<div class="absolute left-4 top-0.5 w-3 h-3 bg-white rounded-full transition-transform"></div>
+</div>
+</td>
+<td class="py-sm px-md text-right text-secondary">2 hrs ago</td>
+<td class="py-sm px-md text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-sm px-md"><input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/></td>
+<td class="py-sm px-md font-medium">Moodle</td>
+<td class="py-sm px-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-green-100 text-green-800 border border-green-200">Positive</span>
+</td>
+<td class="py-sm px-md">
+<div class="flex items-center gap-xs">
+<div class="h-1.5 w-16 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-2/3"></div>
+</div>
+<span class="text-xs text-secondary">Med</span>
+</div>
+</td>
+<td class="py-sm px-md">
+<div class="relative inline-block w-8 h-4 rounded-full bg-primary cursor-pointer">
+<div class="absolute left-4 top-0.5 w-3 h-3 bg-white rounded-full transition-transform"></div>
+</div>
+</td>
+<td class="py-sm px-md text-right text-secondary">1 day ago</td>
+<td class="py-sm px-md text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-[#f8fafc] transition-colors group">
+<td class="py-sm px-md"><input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/></td>
+<td class="py-sm px-md font-medium text-outline">K-12</td>
+<td class="py-sm px-md">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-red-100 text-red-800 border border-red-200">Negative</span>
+</td>
+<td class="py-sm px-md">
+<div class="flex items-center gap-xs">
+<div class="h-1.5 w-16 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-full"></div>
+</div>
+<span class="text-xs text-secondary">High</span>
+</div>
+</td>
+<td class="py-sm px-md">
+<div class="relative inline-block w-8 h-4 rounded-full bg-surface-container-high cursor-pointer border border-outline-variant">
+<div class="absolute left-0.5 top-0.5 w-3 h-3 bg-secondary rounded-full transition-transform"></div>
+</div>
+</td>
+<td class="py-sm px-md text-right text-secondary">3 days ago</td>
+<td class="py-sm px-md text-right opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-secondary hover:text-primary"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-sm border-t border-surface-container flex items-center justify-between bg-surface-bright">
+<span class="font-label-sm text-label-sm text-secondary">Showing 1 to 3 of 42 entries</span>
+<div class="flex gap-xs">
+<button class="px-sm py-xs border border-outline-variant rounded bg-surface hover:bg-surface-variant text-secondary text-xs disabled:opacity-50" disabled="">Prev</button>
+<button class="px-sm py-xs border border-outline-variant rounded bg-surface hover:bg-surface-variant text-secondary text-xs">Next</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/keywords.js"></script>
+</body></html>

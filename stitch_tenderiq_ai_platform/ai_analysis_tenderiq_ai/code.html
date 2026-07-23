@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Analysis &amp; Insights - TenderIQ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#1b1b1d",
+                      "surface-tint": "#565e74",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#c4c6d1",
+                      "secondary-fixed": "#e1e2ed",
+                      "on-secondary-container": "#60626c",
+                      "on-tertiary-fixed-variant": "#574425",
+                      "on-background": "#1b1b1d",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#bec6e0",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#191b24",
+                      "inverse-surface": "#303032",
+                      "error": "#ba1a1a",
+                      "surface": "#fcf8fa",
+                      "surface-variant": "#e4e2e4",
+                      "on-primary-fixed": "#131b2e",
+                      "on-secondary-fixed-variant": "#444650",
+                      "on-secondary": "#ffffff",
+                      "secondary-container": "#dedfeb",
+                      "tertiary-fixed-dim": "#dec29a",
+                      "on-error": "#ffffff",
+                      "tertiary": "#000000",
+                      "on-tertiary-container": "#98805d",
+                      "on-primary-container": "#7c839b",
+                      "surface-bright": "#fcf8fa",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "inverse-on-surface": "#f3f0f2",
+                      "primary-container": "#131b2e",
+                      "primary": "#000000",
+                      "on-surface-variant": "#45464d",
+                      "surface-container-high": "#eae7e9",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-primary": "#ffffff",
+                      "secondary": "#5c5e68",
+                      "outline-variant": "#c6c6cd",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#f0edef",
+                      "surface-container-low": "#f6f3f5",
+                      "tertiary-container": "#271901",
+                      "outline": "#76777d",
+                      "surface-container-highest": "#e4e2e4",
+                      "on-tertiary-fixed": "#271901",
+                      "surface-dim": "#dcd9db",
+                      "primary-fixed": "#dae2fd",
+                      "background": "#fcf8fa",
+                      "tertiary-fixed": "#fcdeb5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "xxl": "48px",
+                      "unit": "8px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "gutter": "24px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Geist"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased flex h-screen overflow-hidden font-body-md text-body-md">
+<!-- SideNavBar (Shared Component) -->
+<aside class="hidden md:flex bg-surface-container dark:bg-surface-container-low border-r border-outline-variant dark:border-outline fixed h-screen w-64 left-0 top-0 flex-col py-xl px-md z-40">
+<div class="flex items-center gap-sm mb-xl px-sm">
+<div class="w-8 h-8 rounded-DEFAULT bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined icon-fill text-xl" data-icon="token">token</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-background">TenderIQ AI</h1>
+<p class="font-label-sm text-label-sm text-secondary">Enterprise Intelligence</p>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-unit">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Tender Intelligence</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="business_center">business_center</span>
+<span class="font-label-md text-label-md">Organizations</span>
+</a>
+<!-- Active State Navigation -->
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-primary dark:text-primary-fixed font-bold border-r-2 border-primary dark:border-primary-fixed bg-surface-variant/50 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined icon-fill" data-icon="psychology">psychology</span>
+<span class="font-label-md text-label-md">AI Analysis</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</nav>
+<div class="mt-auto pt-lg border-t border-outline-variant flex flex-col gap-md">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-secondary hover:text-on-surface hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<button class="w-full bg-primary-container text-on-primary font-label-md text-label-md py-sm px-md rounded-lg hover:bg-primary-container/90 transition-colors">
+                Upgrade to Pro
+            </button>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="flex-1 ml-0 md:ml-64 flex flex-col h-screen overflow-hidden bg-background">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center w-full px-xl h-16 sticky top-0 z-50">
+<div class="flex items-center gap-lg">
+<!-- Mobile Menu Trigger -->
+<button class="md:hidden text-on-surface">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed hidden md:block">
+                    TenderIQ
+                </div>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer p-xs rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer p-xs rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden ml-sm cursor-pointer">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate user in a well-lit modern office environment, wearing business casual attire. The lighting is soft and neutral, conveying trust and competence. High resolution and sharp focus on the face." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSm6EQsWTIebrLnsh7Y6G8nfmz973waCjZxZwJGqXMBoG-Y5NBl63eVbUmI2_3Xi0DLXxZVYxQpSChFQtbYJu3cZdjGFAoNPh86Pigy3nLZdTO0pLymQFHTtUMecciQnPlvQEhcpGbJ3z-cwHKGbyB7dmKONF92tQnFTZXW0eQXmGXuzp-Jp9WCkl_Q4oCuLCJINSJkXPHB27ibK9_U0pavwqWIf02DF38z0KCVCChOdGOFCwrpb4xqJy4NkyYZ8EFiDck8XmUhqk"/>
+</div>
+</div>
+</header>
+<!-- Canvas Area -->
+<div class="flex-1 overflow-y-auto p-md md:p-xl">
+<div class="max-w-container-max mx-auto flex flex-col gap-xl pb-xxl">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<div class="flex items-center gap-sm text-secondary font-label-sm text-label-sm mb-xs">
+<span>Opportunities</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<span>REF-2024-8923</span>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface flex items-center gap-sm">
+                            Department of Defense Cloud Migration Services
+                            <span class="bg-primary-fixed/20 text-on-primary-fixed px-sm py-xs rounded-DEFAULT font-label-sm text-label-sm border border-primary-fixed/30 flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]" data-icon="auto_awesome">auto_awesome</span>
+                                AI Analyzed
+                            </span>
+</h2>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm border border-outline rounded-lg text-on-surface font-label-md text-label-md hover:bg-surface-variant transition-colors">
+                            Download PDF
+                        </button>
+<button class="px-md py-sm bg-primary-container text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary-container/90 transition-colors shadow-sm">
+                            Generate Bid Draft
+                        </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- AI Bid Recommendation Card (Span 8) -->
+<div class="col-span-1 md:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden relative shadow-[0_4px_12px_rgba(15,23,42,0.03)] border-l-4 border-l-primary-fixed flex flex-col">
+<!-- AI Glow Backdrop -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/10 rounded-full blur-3xl -z-10 pointer-events-none transform translate-x-1/3 -translate-y-1/3"></div>
+<div class="p-lg flex-1 flex flex-col">
+<div class="flex items-center justify-between mb-md">
+<div class="flex items-center gap-sm text-on-primary-fixed font-label-md text-label-md">
+<span class="material-symbols-outlined icon-fill" data-icon="psychology">psychology</span>
+<span>TenderIQ Intelligence Recommendation</span>
+</div>
+<span class="text-secondary font-body-sm text-body-sm">Updated 2h ago</span>
+</div>
+<div class="flex flex-col md:flex-row gap-lg items-start md:items-center flex-1">
+<div class="flex-1">
+<div class="inline-flex items-center gap-unit bg-primary/5 text-primary px-md py-sm rounded-lg font-headline-md text-headline-md mb-sm border border-primary/10">
+<span class="material-symbols-outlined icon-fill text-primary" data-icon="check_circle">check_circle</span>
+                                        Strong Pursue
+                                    </div>
+<p class="text-secondary font-body-md text-body-md">
+                                        Based on historical award patterns for DoD IT contracts and your organization's recent success in secure cloud migrations, the probability of advancing to the shortlist is exceptionally high. Pricing margins align with typical tier-1 vendor benchmarks.
+                                    </p>
+</div>
+<!-- Win Probability Donut (Simulated) -->
+<div class="w-32 h-32 relative flex-shrink-0 mx-auto md:mx-0">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-variant fill-none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary-container fill-none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke="currentColor" stroke-dasharray="87, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-md text-headline-md text-on-surface">87%</span>
+<span class="font-label-sm text-label-sm text-secondary">Win Prob</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Technical Match Score (Span 4) -->
+<div class="col-span-1 md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-[0_4px_12px_rgba(15,23,42,0.03)] flex flex-col">
+<h3 class="font-label-md text-label-md text-on-surface mb-xl">Technical Capability Match</h3>
+<div class="flex-1 flex flex-col justify-center gap-md">
+<div>
+<div class="flex justify-between mb-xs font-body-sm text-body-sm text-secondary">
+<span>Cloud Architecture</span>
+<span class="text-on-surface font-label-md">95%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-primary-container h-2 rounded-full" style="width: 95%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-xs font-body-sm text-body-sm text-secondary">
+<span>Zero Trust Security</span>
+<span class="text-on-surface font-label-md">88%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-primary-container h-2 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-xs font-body-sm text-body-sm text-secondary">
+<span>Legacy System Integration</span>
+<span class="text-on-surface font-label-md">72%</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-2">
+<div class="bg-surface-tint h-2 rounded-full" style="width: 72%"></div>
+</div>
+</div>
+</div>
+<div class="mt-lg pt-md border-t border-outline-variant flex items-start gap-sm">
+<span class="material-symbols-outlined text-surface-tint text-[20px]" data-icon="info">info</span>
+<p class="font-label-sm text-label-sm text-secondary leading-snug">Overall match is <strong>92%</strong> against company past performance database.</p>
+</div>
+</div>
+<!-- Visual Scores Row (4 metrics) -->
+<div class="col-span-1 md:col-span-12 grid grid-cols-2 md:grid-cols-4 gap-md">
+<!-- Metric 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-sm">
+<div class="flex justify-between items-center text-secondary">
+<span class="font-label-sm text-label-sm">Compliance Risk</span>
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Low</div>
+<div class="w-full bg-surface-variant rounded-full h-1 mt-auto">
+<div class="bg-[#10b981] h-1 rounded-full w-1/4"></div> <!-- Hardcoded purely for thematic metric color if allowed, but sticking to config colors is safer. Let's use config colors for semantic meaning where possible, or stick to monochrome if unavailable. Using primary-container. -->
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-sm">
+<div class="flex justify-between items-center text-secondary">
+<span class="font-label-sm text-label-sm">Budget Alignment</span>
+<span class="material-symbols-outlined" data-icon="attach_money">attach_money</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Optimal</div>
+<div class="w-full bg-surface-variant rounded-full h-1 mt-auto">
+<div class="bg-primary-container h-1 rounded-full w-4/5"></div>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-sm">
+<div class="flex justify-between items-center text-secondary">
+<span class="font-label-sm text-label-sm">Timeline Feasibility</span>
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Aggressive</div>
+<div class="w-full bg-surface-variant rounded-full h-1 mt-auto">
+<div class="bg-on-tertiary-container h-1 rounded-full w-3/4"></div>
+</div>
+</div>
+<!-- Metric 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex flex-col gap-sm">
+<div class="flex justify-between items-center text-secondary">
+<span class="font-label-sm text-label-sm">Competitor Threat</span>
+<span class="material-symbols-outlined" data-icon="swords">swords</span>
+</div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Moderate</div>
+<div class="w-full bg-surface-variant rounded-full h-1 mt-auto">
+<div class="bg-surface-tint h-1 rounded-full w-1/2"></div>
+</div>
+</div>
+</div>
+<!-- SWOT Analysis (Span 7) -->
+<div class="col-span-1 md:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-[0_4px_12px_rgba(15,23,42,0.03)]">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-lg flex items-center gap-sm">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+                            SWOT Analysis
+                        </h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<!-- Strengths -->
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50">
+<h4 class="font-label-md text-label-md text-on-surface mb-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="trending_up">trending_up</span> Strengths
+                                </h4>
+<ul class="space-y-sm font-body-sm text-body-sm text-secondary list-disc pl-md">
+<li>Pre-existing vendor relationship with DoD branch.</li>
+<li>Proprietary security framework exceeds RFP requirements.</li>
+</ul>
+</div>
+<!-- Weaknesses -->
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50">
+<h4 class="font-label-md text-label-md text-on-surface mb-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-surface-tint" data-icon="trending_down">trending_down</span> Weaknesses
+                                </h4>
+<ul class="space-y-sm font-body-sm text-body-sm text-secondary list-disc pl-md">
+<li>Limited availability of cleared Tier-3 support engineers.</li>
+<li>Pricing model historically 10% above median.</li>
+</ul>
+</div>
+<!-- Opportunities -->
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50">
+<h4 class="font-label-md text-label-md text-on-surface mb-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="lightbulb">lightbulb</span> Opportunities
+                                </h4>
+<ul class="space-y-sm font-body-sm text-body-sm text-secondary list-disc pl-md">
+<li>Upsell potential for continuous monitoring module.</li>
+<li>Establishes baseline for upcoming Phase 2 contract.</li>
+</ul>
+</div>
+<!-- Threats -->
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant/50">
+<h4 class="font-label-md text-label-md text-on-surface mb-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-error" data-icon="warning">warning</span> Threats
+                                </h4>
+<ul class="space-y-sm font-body-sm text-body-sm text-secondary list-disc pl-md">
+<li>Incumbent vendor aggressive price cutting expected.</li>
+<li>Potential delays in federal budget approval timeline.</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Action Center (Span 5) -->
+<div class="col-span-1 md:col-span-5 flex flex-col gap-lg">
+<!-- Missing Documents -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex-1 shadow-[0_4px_12px_rgba(15,23,42,0.03)]">
+<h3 class="font-label-md text-label-md text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+                                Missing Requirements
+                            </h3>
+<div class="space-y-unit">
+<div class="flex items-start gap-sm p-sm rounded-lg hover:bg-surface-container-low transition-colors group cursor-pointer">
+<span class="material-symbols-outlined text-surface-tint mt-xs text-[18px]" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface">Security Appendix C (FedRAMP)</p>
+<p class="font-body-sm text-body-sm text-secondary">Required for compliance baseline.</p>
+</div>
+<button class="ml-auto opacity-0 group-hover:opacity-100 text-primary-container font-label-sm text-label-sm">Upload</button>
+</div>
+<div class="flex items-start gap-sm p-sm rounded-lg hover:bg-surface-container-low transition-colors group cursor-pointer">
+<span class="material-symbols-outlined text-surface-tint mt-xs text-[18px]" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface">Past Performance Citations (3x)</p>
+<p class="font-body-sm text-body-sm text-secondary">Need similar scope examples within 3 years.</p>
+</div>
+<button class="ml-auto opacity-0 group-hover:opacity-100 text-primary-container font-label-sm text-label-sm">Generate</button>
+</div>
+</div>
+</div>
+<!-- Recommended Actions -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md flex-1 shadow-[0_4px_12px_rgba(15,23,42,0.03)] border-l-2 border-l-primary-fixed">
+<h3 class="font-label-md text-label-md text-on-surface mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary-fixed icon-fill" data-icon="tips_and_updates">tips_and_updates</span>
+                                AI Recommended Actions
+                            </h3>
+<div class="space-y-sm">
+<div class="bg-primary-fixed/10 p-sm rounded-lg border border-primary-fixed/20 flex gap-sm">
+<span class="material-symbols-outlined text-on-primary-fixed text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface">Draft alternative pricing tier</p>
+<p class="font-body-sm text-body-sm text-secondary mt-xs">To counter incumbent threat, generate a volume-discount model.</p>
+</div>
+</div>
+<div class="p-sm flex gap-sm items-center hover:bg-surface-container-low rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="event">event</span>
+<span class="font-label-sm text-label-sm text-on-surface flex-1">Schedule SME Technical Review</span>
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="open_in_new">open_in_new</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/ai_analysis.js"></script>
+</body></html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TenderIQ AI - Source Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#1b1b1d",
+                      "surface-tint": "#565e74",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#c4c6d1",
+                      "secondary-fixed": "#e1e2ed",
+                      "on-secondary-container": "#60626c",
+                      "on-tertiary-fixed-variant": "#574425",
+                      "on-background": "#1b1b1d",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#bec6e0",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#191b24",
+                      "inverse-surface": "#303032",
+                      "error": "#ba1a1a",
+                      "surface": "#fcf8fa",
+                      "surface-variant": "#e4e2e4",
+                      "on-primary-fixed": "#131b2e",
+                      "on-secondary-fixed-variant": "#444650",
+                      "on-secondary": "#ffffff",
+                      "secondary-container": "#dedfeb",
+                      "tertiary-fixed-dim": "#dec29a",
+                      "on-error": "#ffffff",
+                      "tertiary": "#000000",
+                      "on-tertiary-container": "#98805d",
+                      "on-primary-container": "#7c839b",
+                      "surface-bright": "#fcf8fa",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "inverse-on-surface": "#f3f0f2",
+                      "primary-container": "#131b2e",
+                      "primary": "#000000",
+                      "on-surface-variant": "#45464d",
+                      "surface-container-high": "#eae7e9",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-primary": "#ffffff",
+                      "secondary": "#5c5e68",
+                      "outline-variant": "#c6c6cd",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#f0edef",
+                      "surface-container-low": "#f6f3f5",
+                      "tertiary-container": "#271901",
+                      "outline": "#76777d",
+                      "surface-container-highest": "#e4e2e4",
+                      "on-tertiary-fixed": "#271901",
+                      "surface-dim": "#dcd9db",
+                      "primary-fixed": "#dae2fd",
+                      "background": "#fcf8fa",
+                      "tertiary-fixed": "#fcdeb5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "xxl": "48px",
+                      "unit": "8px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "gutter": "24px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Geist"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ai-glass {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .insight-glow {
+            box-shadow: inset 0 0 0 1px rgba(107, 70, 193, 0.2);
+        }
+      </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="bg-surface-container dark:bg-surface-container-low h-screen w-64 left-0 top-0 border-r border-outline-variant dark:border-outline flex flex-col py-xl px-md fixed z-40 hidden md:flex">
+<div class="flex items-center gap-sm mb-xl px-sm">
+<img alt="TenderIQ Logo" class="w-8 h-8 rounded" data-alt="A modern, abstract logo for an enterprise AI procurement platform. Geometric, sleek, slate and navy colors. Minimalist." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP4UENwpShTwAmd0cju2JVXKX_kgv70AREQlSFfcSqTN6dSm6N7csl-5R2wEQk-RfO59xF_hkNFDT_FjEkq03Yl_gu-nxv7Vash4GmYxCM5MPVgb1BODw7PeQZac_ygfr9EBsn54YPx-TP5P9Qr_9OBa_UIjcevSVBOSJc0OQINiXbqEaDDmC9aQPTZ4NH6Oc1AofZ4PE9KoI99_EHLBGFtbkRQso9ZIYRYmiGlT1E9bk0YaWZbVR2IbQ8y2UV2mLtlnM8g-1g-RU"/>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-background">TenderIQ AI</h1>
+<p class="font-label-sm text-label-sm text-secondary">Enterprise Intelligence</p>
+</div>
+</div>
+<nav class="flex-1 space-y-sm">
+<a class="flex items-center gap-md px-sm py-sm rounded-md text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-sm py-sm rounded-md text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Tender Intelligence</span>
+</a>
+<a class="flex items-center gap-md px-sm py-sm rounded-md text-primary dark:text-primary-fixed font-bold border-r-2 border-primary dark:border-primary-fixed bg-surface-variant" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">business_center</span>
+<span class="font-body-md text-body-md">Organizations</span>
+</a>
+<a class="flex items-center gap-md px-sm py-sm rounded-md text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-body-md text-body-md">AI Analysis</span>
+</a>
+<a class="flex items-center gap-md px-sm py-sm rounded-md text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+<a class="flex items-center gap-md px-sm py-sm rounded-md text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200 Active: scale-[0.98] transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-sm pt-lg">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:bg-primary/90 transition-colors">Upgrade to Pro</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center w-full px-xl h-16 sticky top-0 z-30">
+<div class="flex items-center gap-md md:hidden">
+<span class="material-symbols-outlined cursor-pointer">menu</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">TenderIQ</span>
+</div>
+<div class="hidden md:flex flex-1">
+<!-- Empty space for layout balance on desktop where sidebar has logo -->
+</div>
+<div class="flex items-center gap-lg">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-secondary text-sm">search</span>
+<input class="pl-xl pr-md py-xs rounded-lg border border-outline-variant bg-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-sm text-body-sm w-64" placeholder="Search sources..." type="text"/>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors">apps</span>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant cursor-pointer" data-alt="A professional headshot of a user in a minimalist corporate setting. Good lighting, slate and navy background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiPxZxsNhg22EaZg0Ksuj0F-K40JqSUvZaABDSEGvCCA139JRDA1jNZ4Y97A7H83bi7u9CQtVzZdv8L7FOIWJVi7DYXAlWh-AnUxlR055YMSAuxMMAw8F6-vslc0swXvF1g9W3pOjQFCdCPr6_oaLdhxNujjtFs_S1n5mvgddvLFPBAaLjMeU6GZoYNtTxWuvBWZS5Khmg-zTulmGmSk-haKmGnRloCvmx8qZTrzuFx2is6hImA21kRtS84eveR26nOsxZvYdB7TM"/>
+</div>
+</div>
+</header>
+<!-- Canvas Area -->
+<div class="flex-1 p-md md:p-xxl max-w-container-max mx-auto w-full">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-xl gap-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">Data Sources</h2>
+<p class="font-body-md text-body-md text-secondary mt-xs">Manage and monitor procurement intelligence feeds.</p>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-md py-sm rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-xs shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Add New Source
+                </button>
+</div>
+<!-- Dashboard Highlights (Bento approach) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
+<!-- AI Insight Card -->
+<div class="col-span-1 md:col-span-2 bg-surface-container-lowest border-l-2 border-[#6b46c1] border border-outline-variant rounded-xl p-lg relative overflow-hidden ai-glass">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-[64px]" style="color: #6b46c1">hub</span>
+</div>
+<div class="flex items-start gap-md relative z-10">
+<div class="bg-[#6b46c1]/10 p-sm rounded-full mt-1">
+<span class="material-symbols-outlined" style="color: #6b46c1">auto_awesome</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-semibold mb-xs">AI Sync Intelligence</h3>
+<p class="font-body-sm text-body-sm text-secondary mb-md">System detected anomalies in the 'EU TED' feed during the last sync. AI has automatically categorized 14 new aerospace tenders despite non-standard metadata.</p>
+<button class="font-label-sm text-label-sm px-sm py-xs rounded bg-[#6b46c1]/10" style="color: #6b46c1">Review Anomalies</button>
+</div>
+</div>
+</div>
+<!-- Global Stats -->
+<div class="col-span-1 bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col justify-center">
+<div class="flex items-center justify-between mb-sm">
+<span class="font-label-md text-label-md text-secondary">Active Connections</span>
+<span class="material-symbols-outlined text-secondary">wifi_tethering</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg font-bold">24</span>
+<span class="font-body-sm text-body-sm text-secondary">/ 25</span>
+</div>
+<div class="mt-auto pt-md flex items-center gap-xs text-[#059669]">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm">99.8% Uptime (30d)</span>
+</div>
+</div>
+</div>
+<!-- Filters & Controls -->
+<div class="flex flex-col sm:flex-row justify-between items-center mb-lg gap-md border-b border-surface-variant pb-md">
+<div class="flex items-center gap-sm overflow-x-auto w-full sm:w-auto pb-xs sm:pb-0 hide-scrollbar">
+<button class="font-label-sm text-label-sm px-md py-xs rounded-full bg-on-surface text-surface-container-lowest whitespace-nowrap">All Sources</button>
+<button class="font-label-sm text-label-sm px-md py-xs rounded-full bg-surface border border-outline-variant text-secondary hover:bg-surface-variant transition-colors whitespace-nowrap">Government</button>
+<button class="font-label-sm text-label-sm px-md py-xs rounded-full bg-surface border border-outline-variant text-secondary hover:bg-surface-variant transition-colors whitespace-nowrap">NGOs</button>
+<button class="font-label-sm text-label-sm px-md py-xs rounded-full bg-surface border border-outline-variant text-secondary hover:bg-surface-variant transition-colors whitespace-nowrap">Corporate</button>
+</div>
+<div class="flex items-center gap-md w-full sm:w-auto justify-end">
+<span class="font-label-sm text-label-sm text-secondary">Sort by:</span>
+<select class="font-label-sm text-label-sm border-none bg-transparent py-xs pl-0 pr-xl focus:ring-0 cursor-pointer text-on-surface font-semibold">
+<option>Last Sync</option>
+<option>Health</option>
+<option>Name A-Z</option>
+</select>
+</div>
+</div>
+<!-- Source Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Card 1 (Healthy) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col shadow-[0px_4px_12px_rgba(15,23,42,0.03)] hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded bg-surface border border-outline-variant flex items-center justify-center p-xs">
+<img alt="UN Logo" class="w-full h-full object-contain" data-alt="Official logo of the United Nations Global Marketplace. Blue and white, clean corporate design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuZkAeTAYFyRKdQfEspkcqs2XLeReoRhpd0SqDcTubmNLtWMLXpkkLvP522M3PKdbjwhUUPRkYa2jYtpYOckCuCOz3OsH433yngFOGVsSfCXKYIjA6dEwKl2_8dWHwBqoqPZ-avtmSlTNhMZhnJqTsSOM_Htdr6sezQ3FoyIZOFoffyshf04gH-uhWVfs2_jkePRkrlLT5v4ffWSsChXcFo8dLDhKeWtA-DtZpWcPelxDg10U-3JGXCxG7MQzl2xHRU7qZhE9OysA"/>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-semibold leading-tight">UNGM Portal</h4>
+<span class="font-label-sm text-label-sm text-secondary">Global / NGO</span>
+</div>
+</div>
+<div class="w-3 h-3 rounded-full bg-[#059669] shadow-[0_0_8px_rgba(5,150,105,0.4)]" title="Healthy"></div>
+</div>
+<div class="space-y-xs mb-lg flex-1">
+<div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs">
+<span class="text-secondary">Extracted Entities</span>
+<span class="font-semibold">45,210</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs pt-xs">
+<span class="text-secondary">Sync Frequency</span>
+<span class="font-semibold">Hourly</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm pt-xs">
+<span class="text-secondary">Last Sync</span>
+<span class="font-semibold">12 mins ago</span>
+</div>
+</div>
+<div class="flex items-center gap-sm mt-auto pt-md border-t border-surface-variant">
+<button class="flex-1 font-label-md text-label-md py-xs rounded bg-surface border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors flex justify-center items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">sync</span> Sync Now
+                        </button>
+<button class="px-sm py-xs rounded text-secondary hover:bg-surface-variant transition-colors" title="View Logs">
+<span class="material-symbols-outlined text-[20px]">list_alt</span>
+</button>
+<button class="px-sm py-xs rounded text-secondary hover:bg-surface-variant transition-colors" title="Settings">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card 2 (Healthy) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col shadow-[0px_4px_12px_rgba(15,23,42,0.03)] hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded bg-surface border border-outline-variant flex items-center justify-center p-xs">
+<img alt="EU TED Logo" class="w-full h-full object-contain" data-alt="Official logo of the EU Tenders Electronic Daily (TED). Blue and yellow European flag motif, minimal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXchFz_eL9ZltjZvfsV6leorZ_FlX3jyJ4Lmtlrb-9LlL8ZiOYCB8C9uGoAwbY9jviAVX6osSQUkChO6wKTq-fPlQDNCKsALc-BQbZxeeVp2-s6ivxEN5OfR9RmbdXulPHpQ3vK9sQHsdRgllkbJ0WpGqCPE_A1goP8shVOY5DhmMu4bbvr7murUQtvFqPyf8YAJvZKVGVXQoKe9zj-kSUb9dRzhEy7n5i5snNC1-evgvbHWG7qNT7O7Nh8hNO0QpKIuw8dllXaFE"/>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-semibold leading-tight">EU TED</h4>
+<span class="font-label-sm text-label-sm text-secondary">Europe / Government</span>
+</div>
+</div>
+<div class="w-3 h-3 rounded-full bg-[#059669] shadow-[0_0_8px_rgba(5,150,105,0.4)]" title="Healthy"></div>
+</div>
+<div class="space-y-xs mb-lg flex-1">
+<div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs">
+<span class="text-secondary">Extracted Entities</span>
+<span class="font-semibold">128,405</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs pt-xs">
+<span class="text-secondary">Sync Frequency</span>
+<span class="font-semibold">Real-time (Webhook)</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm pt-xs">
+<span class="text-secondary">Last Sync</span>
+<span class="font-semibold">Just now</span>
+</div>
+</div>
+<div class="flex items-center gap-sm mt-auto pt-md border-t border-surface-variant">
+<button class="flex-1 font-label-md text-label-md py-xs rounded bg-surface border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors flex justify-center items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">sync</span> Sync Now
+                        </button>
+<button class="px-sm py-xs rounded text-secondary hover:bg-surface-variant transition-colors" title="View Logs">
+<span class="material-symbols-outlined text-[20px]">list_alt</span>
+</button>
+<button class="px-sm py-xs rounded text-secondary hover:bg-surface-variant transition-colors" title="Settings">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card 3 (Error) -->
+<div class="bg-surface-container-lowest border border-error-container rounded-xl p-lg flex flex-col shadow-[0px_4px_12px_rgba(15,23,42,0.03)] hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded bg-surface border border-outline-variant flex items-center justify-center p-xs">
+<span class="material-symbols-outlined text-[24px] text-secondary">account_balance</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-semibold leading-tight">US SAM.gov</h4>
+<span class="font-label-sm text-label-sm text-secondary">USA / Government</span>
+</div>
+</div>
+<div class="w-3 h-3 rounded-full bg-error shadow-[0_0_8px_rgba(186,26,26,0.4)] animate-pulse" title="Error"></div>
+</div>
+<div class="space-y-xs mb-lg flex-1">
+<div class="p-xs bg-error-container/30 rounded text-error text-label-sm font-label-sm mb-xs flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">warning</span> API Rate Limit Exceeded
+                        </div>
+<div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs pt-xs">
+<span class="text-secondary">Extracted Entities</span>
+<span class="font-semibold">89,200</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm pt-xs">
+<span class="text-secondary">Last Sync</span>
+<span class="font-semibold text-error">Failed (4 hrs ago)</span>
+</div>
+</div>
+<div class="flex items-center gap-sm mt-auto pt-md border-t border-surface-variant">
+<button class="flex-1 font-label-md text-label-md py-xs rounded bg-surface border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors flex justify-center items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">sync</span> Retry Sync
+                        </button>
+<button class="px-sm py-xs rounded text-error hover:bg-error-container/20 transition-colors" title="View Error Logs">
+<span class="material-symbols-outlined text-[20px]">assignment_late</span>
+</button>
+<button class="px-sm py-xs rounded text-secondary hover:bg-surface-variant transition-colors" title="Settings">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Card 4 (Healthy) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col shadow-[0px_4px_12px_rgba(15,23,42,0.03)] hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded bg-surface border border-outline-variant flex items-center justify-center p-xs">
+<span class="material-symbols-outlined text-[24px] text-secondary">domain</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-semibold leading-tight">Ariba Network</h4>
+<span class="font-label-sm text-label-sm text-secondary">Global / Corporate</span>
+</div>
+</div>
+<div class="w-3 h-3 rounded-full bg-[#059669] shadow-[0_0_8px_rgba(5,150,105,0.4)]" title="Healthy"></div>
+</div>
+<div class="space-y-xs mb-lg flex-1">
+<div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs">
+<span class="text-secondary">Extracted Entities</span>
+<span class="font-semibold">2,104</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs pt-xs">
+<span class="text-secondary">Sync Frequency</span>
+<span class="font-semibold">Daily</span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm pt-xs">
+<span class="text-secondary">Last Sync</span>
+<span class="font-semibold">6 hours ago</span>
+</div>
+</div>
+<div class="flex items-center gap-sm mt-auto pt-md border-t border-surface-variant">
+<button class="flex-1 font-label-md text-label-md py-xs rounded bg-surface border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors flex justify-center items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">sync</span> Sync Now
+                        </button>
+<button class="px-sm py-xs rounded text-secondary hover:bg-surface-variant transition-colors" title="View Logs">
+<span class="material-symbols-outlined text-[20px]">list_alt</span>
+</button>
+<button class="px-sm py-xs rounded text-secondary hover:bg-surface-variant transition-colors" title="Settings">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/sources.js"></script>
+</body></html>

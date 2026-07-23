@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TenderIQ AI - Opportunities</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#1b1b1d",
+                      "surface-tint": "#565e74",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#c4c6d1",
+                      "secondary-fixed": "#e1e2ed",
+                      "on-secondary-container": "#60626c",
+                      "on-tertiary-fixed-variant": "#574425",
+                      "on-background": "#1b1b1d",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#bec6e0",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#191b24",
+                      "inverse-surface": "#303032",
+                      "error": "#ba1a1a",
+                      "surface": "#fcf8fa",
+                      "surface-variant": "#e4e2e4",
+                      "on-primary-fixed": "#131b2e",
+                      "on-secondary-fixed-variant": "#444650",
+                      "on-secondary": "#ffffff",
+                      "secondary-container": "#dedfeb",
+                      "tertiary-fixed-dim": "#dec29a",
+                      "on-error": "#ffffff",
+                      "tertiary": "#000000",
+                      "on-tertiary-container": "#98805d",
+                      "on-primary-container": "#7c839b",
+                      "surface-bright": "#fcf8fa",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "inverse-on-surface": "#f3f0f2",
+                      "primary-container": "#131b2e",
+                      "primary": "#000000",
+                      "on-surface-variant": "#45464d",
+                      "surface-container-high": "#eae7e9",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-primary": "#ffffff",
+                      "secondary": "#5c5e68",
+                      "outline-variant": "#c6c6cd",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#f0edef",
+                      "surface-container-low": "#f6f3f5",
+                      "tertiary-container": "#271901",
+                      "outline": "#76777d",
+                      "surface-container-highest": "#e4e2e4",
+                      "on-tertiary-fixed": "#271901",
+                      "surface-dim": "#dcd9db",
+                      "primary-fixed": "#dae2fd",
+                      "background": "#fcf8fa",
+                      "tertiary-fixed": "#fcdeb5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1440px",
+                      "xxl": "48px",
+                      "unit": "8px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "gutter": "24px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Geist"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .ai-glow {
+            box-shadow: inset 2px 0 0 0 #6366f1, 0 4px 20px -2px rgba(99, 102, 241, 0.05);
+            background: linear-gradient(to right, rgba(99, 102, 241, 0.02), transparent);
+        }
+        .circular-chart {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            max-height: 250px;
+        }
+        .circle-bg {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 3.8;
+        }
+        .circle {
+            fill: none;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            animation: progress 1s ease-out forwards;
+        }
+        @keyframes progress {
+            0% { stroke-dasharray: 0 100; }
+        }
+        .percentage {
+            fill: theme('colors.primary');
+            font-family: 'Geist', sans-serif;
+            font-size: 0.5em;
+            text-anchor: middle;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container dark:bg-surface-container-low docked h-screen w-64 left-0 top-0 border-r border-outline-variant dark:border-outline flat no shadows flex-col h-full py-xl px-md fixed z-40">
+<div class="flex items-center gap-3 mb-xl px-2">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold shadow-sm">T</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-background">TenderIQ AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Enterprise Intelligence</p>
+</div>
+</div>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary dark:text-primary-fixed font-bold border-r-2 border-primary dark:border-primary-fixed bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-body-md text-body-md">Tender Intelligence</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="business_center">business_center</span>
+<span class="font-body-md text-body-md">Organizations</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-body-md text-body-md">AI Analysis</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:text-on-surface dark:hover:text-on-surface-variant hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto">
+<button class="w-full bg-primary text-on-primary py-2 px-4 rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-colors shadow-sm">
+                Upgrade to Pro
+            </button>
+</div>
+</nav>
+<div class="flex-1 flex flex-col min-h-screen ml-0 md:ml-64 w-full">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center w-full px-xl h-16 sticky top-0 z-30 transition-all focus-within:ring-2 focus-within:ring-primary/20">
+<div class="flex items-center gap-4 flex-1">
+<button class="md:hidden text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed hidden md:block">Tender Intelligence</h2>
+</div>
+<div class="flex-1 flex justify-center md:justify-start max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-shadow" placeholder="Search opportunities..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4 flex-1 justify-end">
+<button class="text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer p-2 rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer p-2 rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant object-cover cursor-pointer" data-alt="A small circular avatar image showing a professional business portrait of a person against a neutral background. The lighting is soft and studio quality. High-key light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfry0g8nPh1e0CfZ6e3WH1OQpNArkIALrox2BlUJv5FVzK6P9S1g9Su6SISxIv50jRCsQ3q5o6tUWB_oW9L2cFa_SP_0SXJTCp6bKZt7CDtMZby7HFqW8cp3mxTEuGvQ8OxvCp-nI0OaNBhGeomlupbVnGRp-9hIfvL2h9dIcPbSJnK2pawPMoNQr7NJwtjy9PY9DcoEiIFSDQ1EPEqUlOvwnJFmgN9bC5j_ugTjF_HxqEq7sV1GVv0dfKVfVpMppg1bDtjj2eMOc"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex bg-surface p-0">
+<!-- Filter Sidebar -->
+<aside class="hidden lg:block w-72 bg-surface-container-lowest border-r border-outline-variant p-lg overflow-y-auto h-[calc(100vh-64px)] sticky top-16">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Filters</h3>
+<button class="text-primary font-label-sm text-label-sm hover:underline">Clear all</button>
+</div>
+<div class="space-y-6">
+<!-- Country -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface block">Country</label>
+<select class="w-full p-2 bg-surface border border-outline-variant rounded-lg font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary/20">
+<option>All Countries</option>
+<option>United States</option>
+<option>United Kingdom</option>
+<option>Germany</option>
+</select>
+</div>
+<!-- Sector -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface block">Sector</label>
+<div class="space-y-2">
+<label class="flex items-center gap-2 font-body-sm text-body-sm cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+                                Technology &amp; IT
+                            </label>
+<label class="flex items-center gap-2 font-body-sm text-body-sm cursor-pointer">
+<input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+                                Defense
+                            </label>
+<label class="flex items-center gap-2 font-body-sm text-body-sm cursor-pointer">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+                                Healthcare
+                            </label>
+</div>
+</div>
+<!-- Budget -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface block">Budget Range</label>
+<div class="flex gap-2">
+<input class="w-1/2 p-2 bg-surface border border-outline-variant rounded-lg font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary/20" placeholder="Min" type="text"/>
+<input class="w-1/2 p-2 bg-surface border border-outline-variant rounded-lg font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary/20" placeholder="Max" type="text"/>
+</div>
+</div>
+<!-- Priority -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface block">AI Priority</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1 bg-surface-container border border-outline-variant rounded-full font-label-sm text-label-sm hover:bg-surface-variant">High</button>
+<button class="px-3 py-1 bg-surface-container border border-outline-variant rounded-full font-label-sm text-label-sm hover:bg-surface-variant">Medium</button>
+<button class="px-3 py-1 bg-surface-container border border-outline-variant rounded-full font-label-sm text-label-sm hover:bg-surface-variant">Low</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- Opportunities Canvas -->
+<div class="flex-1 p-lg md:p-xl max-w-container-max mx-auto overflow-y-auto h-[calc(100vh-64px)]">
+<!-- Results Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-lg gap-4">
+<div>
+<h2 class="font-headline-md text-headline-md font-semibold text-on-surface">Recommended Tenders</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Found 142 opportunities matching your intelligence profile.</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sort by:</span>
+<select class="p-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary/20">
+<option>Match Score (High to Low)</option>
+<option>Deadline (Soonest)</option>
+<option>Budget (Highest)</option>
+</select>
+</div>
+</div>
+<!-- Opportunity Cards Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-lg">
+<!-- Card 1 (High Match, AI Enhanced) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm hover:shadow-md transition-shadow ai-glow flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center border border-outline-variant p-2">
+<img alt="Org Logo" class="w-full h-full object-contain" data-alt="A minimalist tech company logo design featuring geometric abstract shapes in monochrome, placed on a crisp white background inside a rounded square." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0AZxnoWnSiK0Yi-ZB3_cjQkOsCWDzO0xsZncNLnb_rDOIHJrM17Z1cJMHnWf1qA2xlfaP6tVLQQklbzgTlQIkb4vUPu6NW6zvicTKClmWMceZe1cUttAw3NMcrxnzDvuw3R_BrxYlWJ6v_tr6r4DNHqjyMsRUeG-4bt0hHIShTvafYWs4F7XtdkrW8943eLnofFfTdUc859mzzrswRBSbBKOazImrUP-LMMfgRl4rvlv_VcIONx2dz3ccgU6us7LK5O9dhitk5b4"/>
+</div>
+<div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm mb-1">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span> High Priority
+                                    </span>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface leading-tight group-hover:text-[#6366f1] transition-colors cursor-pointer">Department of Defense - Cloud Infrastructure Overhaul</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">U.S. Federal Government</p>
+</div>
+</div>
+<!-- Match Score Circular Progress -->
+<div class="w-14 h-14 relative shrink-0">
+<svg class="circular-chart text-[#6366f1]" viewbox="0 0 36 36">
+<path class="circle-bg" d="M18 2.0845
+                                      a 15.9155 15.9155 0 0 1 0 31.831
+                                      a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+<path class="circle" d="M18 2.0845
+                                      a 15.9155 15.9155 0 0 1 0 31.831
+                                      a 15.9155 15.9155 0 0 1 0 -31.831" stroke="#6366f1" stroke-dasharray="94, 100"></path>
+<text class="percentage font-label-sm" x="18" y="20.35">94%</text>
+</svg>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 py-4 border-y border-outline-variant/50 mb-4 bg-surface/50 -mx-lg px-lg">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Estimated Value</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">$45M - $60M</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Deadline</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface text-error">Oct 24, 2023</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Location</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> Washington D.C.
+                                </p>
+</div>
+</div>
+<div class="mb-6 flex-1">
+<div class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#6366f1]/10 text-[#6366f1] font-label-sm text-label-sm mb-2 border border-[#6366f1]/20">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span> AI Summary
+                            </div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                                Opportunity aligns strongly with your recent cloud migration projects. Requires FedRAMP High certification. Key competitors likely include AWS and Azure partners.
+                            </p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary bg-surface-container-low hover:bg-surface-variant rounded-lg transition-colors" title="Save">
+<span class="material-symbols-outlined">bookmark_border</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary bg-surface-container-low hover:bg-surface-variant rounded-lg transition-colors" title="Share">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-colors">
+                                View Details
+                            </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm hover:shadow-md transition-shadow flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center border border-outline-variant p-2">
+<img alt="Org Logo" class="w-full h-full object-contain" data-alt="A clean, simple corporate logo for a healthcare organization. A stylized cross or heart in soft blue and grey tones on a white background. Studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnPkkQKCGRvw-DU-LQ3kUX1BSjYkPh-2tUqrPcRMQKunghhJr61PXdOuUbYTe2W9PDoX8OSUpEjwpfo9lmHPCjamn-kVlMgHd_6E6ZbS_OJOJ4_7HLnrjeG3QgdkSiI2ZJ2VndGp27MbZQYvtHGLKnRdQV5noDv8dLDHzLa4Ju2lKFIQuOfnV_GsrGg9SqMOpqxJdIznBhduFgrECdDjTB9MhJR80ms8sQHTfooMd0dStVOiNTuaeesqlcVjtsjyjrvurOJkv1iHQ"/>
+</div>
+<div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm mb-1">
+                                         Medium Priority
+                                    </span>
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface leading-tight group-hover:text-primary transition-colors cursor-pointer">National Health Service - AI Diagnostics Platform</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">NHS UK</p>
+</div>
+</div>
+<!-- Match Score Circular Progress -->
+<div class="w-14 h-14 relative shrink-0">
+<svg class="circular-chart text-primary" viewbox="0 0 36 36">
+<path class="circle-bg" d="M18 2.0845
+                                      a 15.9155 15.9155 0 0 1 0 31.831
+                                      a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+<path class="circle" d="M18 2.0845
+                                      a 15.9155 15.9155 0 0 1 0 31.831
+                                      a 15.9155 15.9155 0 0 1 0 -31.831" stroke="currentColor" stroke-dasharray="78, 100"></path>
+<text class="percentage font-label-sm" x="18" y="20.35">78%</text>
+</svg>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 py-4 border-y border-outline-variant/50 mb-4 bg-surface/50 -mx-lg px-lg">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Estimated Value</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">£12M</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Deadline</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Nov 15, 2023</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Location</p>
+<p class="font-body-md text-body-md font-semibold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span> London, UK
+                                </p>
+</div>
+</div>
+<div class="mb-6 flex-1">
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-7">
+                                Seeking scalable AI solutions for medical imaging analysis. Good fit for your recent healthcare models, but requires UK data residency compliance.
+                            </p>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary bg-surface-container-low hover:bg-surface-variant rounded-lg transition-colors" title="Save">
+<span class="material-symbols-outlined">bookmark_border</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary bg-surface-container-low hover:bg-surface-variant rounded-lg transition-colors" title="Share">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+<button class="px-4 py-2 border border-outline-variant text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-variant transition-colors">
+                                View Details
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script src="/static/js/auth.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/opportunities.js"></script>
+</body></html>
