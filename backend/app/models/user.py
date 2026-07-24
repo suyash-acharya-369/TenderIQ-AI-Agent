@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, Text, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, DateTime, Text, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from backend.app.database.session import Base
 
@@ -16,6 +16,7 @@ class User(Base):
     is_locked = Column(Boolean, default=False)
     failed_login_attempts = Column(Integer, default=0)
     last_login = Column(DateTime, nullable=True)
+    notification_preferences = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")

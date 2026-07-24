@@ -12,6 +12,13 @@ class UserCreate(BaseModel):
     full_name: str
     role: Optional[str] = "Viewer"
 
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+    is_locked: Optional[bool] = None
+    password: Optional[str] = None
+
 class UserResponse(BaseModel):
     id: int
     email: str

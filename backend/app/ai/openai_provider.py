@@ -24,9 +24,8 @@ class OpenAIProvider(BaseAIProvider):
             except Exception as e:
                 logger.warning(f"AI client initialization failed: {e}")
 
-    def generate_summary(self, text: str, prompt_template: str) -> Dict[str, Any]:
+    def generate_summary(self, text: str, prompt_template: Optional[str] = None) -> Dict[str, Any]:
         if not self.client:
-            # Fallback mock structural AI parser for demonstration when API key is unconfigured
             return self._heuristic_fallback_summary(text)
 
         try:

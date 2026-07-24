@@ -17,6 +17,11 @@ from backend.app.api.settings import router as settings_router
 from backend.app.api.prompts import router as prompts_router
 from backend.app.api.health import router as health_router
 from backend.app.api.analytics import router as analytics_router
+from backend.app.api.users import router as users_router
+from backend.app.api.organizations import router as organizations_router
+from backend.app.api.admin import router as admin_router
+from backend.app.api.notifications import router as notifications_router
+from backend.app.services.scheduler import scheduler
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -33,11 +38,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize Database & Seed
+# Security Headers Middleware
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
+# Initialize Database, Seed & Background Scheduler
 @app.on_event("startup")
 def startup_event():
     Base.metadata.create_all(bind=engine)
     seed_db()
+    scheduler.start()
 
 # Mount API V1 Routers
 app.include_router(auth_router, prefix=settings.API_V1_STR)
@@ -49,6 +65,10 @@ app.include_router(settings_router, prefix=settings.API_V1_STR)
 app.include_router(prompts_router, prefix=settings.API_V1_STR)
 app.include_router(health_router, prefix=settings.API_V1_STR)
 app.include_router(analytics_router, prefix=settings.API_V1_STR)
+app.include_router(users_router, prefix=settings.API_V1_STR)
+app.include_router(organizations_router, prefix=settings.API_V1_STR)
+app.include_router(admin_router, prefix=settings.API_V1_STR)
+app.include_router(notifications_router, prefix=settings.API_V1_STR)
 
 # Mount Static Client Scripts & Assets
 static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../static"))
@@ -79,6 +99,11 @@ def opportunities_page():
     path = os.path.join(stitch_dir, "opportunities_tenderiq_ai", "code.html")
     return FileResponse(path)
 
+@app.get("/notifications")
+def notifications_page():
+    path = os.path.join(stitch_dir, "notifications_tenderiq_ai", "code.html")
+    return FileResponse(path)
+
 @app.get("/opportunity-details")
 def opportunity_details_page():
     path = os.path.join(stitch_dir, "opportunity_details_tenderiq_ai", "code.html")
@@ -98,9 +123,3 @@ def keywords_page():
 def ai_analysis_page():
     path = os.path.join(stitch_dir, "ai_analysis_tenderiq_ai", "code.html")
     return FileResponse(path)
-
-@app.get("/reports")
-def reports_page():
-    path = os.path.join(stitch_dir, "keyword_manager_tenderiq_ai", "code.html")
-    return FileResponse(path)
-

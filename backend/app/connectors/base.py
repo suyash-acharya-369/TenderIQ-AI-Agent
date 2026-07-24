@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 class BaseConnector(ABC):
     @abstractmethod
@@ -8,7 +8,13 @@ class BaseConnector(ABC):
         pass
 
     @abstractmethod
-    def crawl(self, source_url: str) -> List[Dict[str, Any]]:
+    def crawl(
+        self,
+        source_url: str,
+        tender_selector: Optional[str] = None,
+        pdf_selector: Optional[str] = None,
+        pagination_selector: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """Crawl portal opportunities."""
         pass
 

@@ -10,6 +10,7 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/static/css/styles.css"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -139,10 +140,12 @@
 <body class="bg-background text-on-background antialiased flex h-screen overflow-hidden">
 <!-- SideNavBar -->
 <nav class="bg-surface-container border-r border-outline-variant flex flex-col h-full py-xl px-md docked h-screen w-64 left-0 top-0 z-40 hidden md:flex shrink-0">
-<div class="mb-xl px-md flex items-center gap-sm">
-<img class="w-8 h-8 object-contain rounded-md" data-alt="A minimalist, geometric logo for a high-tech AI enterprise procurement platform. The logo should use dark navy and a subtle vibrant purple gradient, symbolizing intelligent data analysis. The style is clean, modern, flat vector art suitable for a light mode dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC02jdPzBrouiC3O-cs-nzUeMXSAePMA06DnHa3q2HVOJrCkVS1_NB5SPYGK5vJXPHNwbD-pYNJcIHW5rYCvhYiCaPVLw0dVLJ3z8hqQ0u-N4y1CckG6f5TeaZD8WS3yxu_aNpy3x404mC5ihKluQBRooECWAY5UA3snNR3tiNG-xn0gxhS7KszY48RywH6Avm2Seqzb3D2mCbG5waLdFJrrfjDFnEvdv9RK_Z6G3PNu2UrZt8iSEo_HNxaHb1mZ6VXBA9usCJbaVw"/>
+<div class="flex items-center gap-3 mb-xl px-2">
+<div class="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-md shrink-0">
+<span class="material-symbols-outlined text-xl">psychology</span>
+</div>
 <div>
-<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">TenderIQ AI</h1>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-background leading-tight">TenderIQ AI</h1>
 <p class="font-label-sm text-label-sm text-secondary">Enterprise Intelligence</p>
 </div>
 </div>
@@ -232,7 +235,7 @@
 </div>
 </div>
 <!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg flex-1 min-h-0">
+<div id="keywords-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg flex-1 min-h-0">
 <!-- Left Panel: Groups -->
 <div class="lg:col-span-3 flex flex-col gap-md">
 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md shadow-[0_4px_12px_rgba(15,23,42,0.03)] h-full flex flex-col">

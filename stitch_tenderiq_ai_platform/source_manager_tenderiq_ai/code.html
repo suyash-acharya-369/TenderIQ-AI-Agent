@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/static/css/styles.css"/>
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -209,10 +210,12 @@
 <body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex">
 <!-- SideNavBar -->
 <aside class="bg-surface-container dark:bg-surface-container-low h-screen w-64 left-0 top-0 border-r border-outline-variant dark:border-outline flex flex-col py-xl px-md fixed z-40 hidden md:flex">
-<div class="flex items-center gap-sm mb-xl px-sm">
-<img alt="TenderIQ Logo" class="w-8 h-8 rounded" data-alt="A modern, abstract logo for an enterprise AI procurement platform. Geometric, sleek, slate and navy colors. Minimalist." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP4UENwpShTwAmd0cju2JVXKX_kgv70AREQlSFfcSqTN6dSm6N7csl-5R2wEQk-RfO59xF_hkNFDT_FjEkq03Yl_gu-nxv7Vash4GmYxCM5MPVgb1BODw7PeQZac_ygfr9EBsn54YPx-TP5P9Qr_9OBa_UIjcevSVBOSJc0OQINiXbqEaDDmC9aQPTZ4NH6Oc1AofZ4PE9KoI99_EHLBGFtbkRQso9ZIYRYmiGlT1E9bk0YaWZbVR2IbQ8y2UV2mLtlnM8g-1g-RU"/>
+<div class="flex items-center gap-3 mb-xl px-2">
+<div class="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-md shrink-0">
+<span class="material-symbols-outlined text-xl">psychology</span>
+</div>
 <div>
-<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-background">TenderIQ AI</h1>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-background leading-tight">TenderIQ AI</h1>
 <p class="font-label-sm text-label-sm text-secondary">Enterprise Intelligence</p>
 </div>
 </div>
@@ -334,7 +337,7 @@
 </div>
 </div>
 <!-- Source Cards Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<div id="sources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
 <!-- Card 1 (Healthy) -->
 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col shadow-[0px_4px_12px_rgba(15,23,42,0.03)] hover:shadow-md transition-shadow">
 <div class="flex justify-between items-start mb-md">

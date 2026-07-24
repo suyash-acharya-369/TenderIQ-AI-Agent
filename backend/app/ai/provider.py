@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 class BaseAIProvider(ABC):
     @abstractmethod
-    def generate_summary(self, text: str, prompt_template: str) -> Dict[str, Any]:
-        """Generate structured JSON summary of tender document."""
+    def generate_summary(self, text: str, prompt_template: Optional[str] = None) -> Dict[str, Any]:
+        """Generate structured executive summary from tender content."""
         pass
 
     @abstractmethod

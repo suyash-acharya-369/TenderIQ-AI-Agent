@@ -10,19 +10,25 @@ cryptography>=42.0.0
 python-multipart>=0.0.9
 httpx>=0.27.0
 openai>=1.14.0
-anthropic>=0.19.0
-google-genai>=0.1.0
-celery>=5.3.6
-apscheduler>=3.10.4
-redis>=5.0.3
-playwright>=1.42.0
-pypdf>=4.1.0
-pdfplumber>=0.11.0
-pytesseract>=0.3.10
-pillow>=10.2.0
-reportlab>=4.1.0
-openpyxl>=3.1.2
+email-validator>=2.0.0
+psutil>=5.9.0
+beautifulsoup4>=4.12.0
+lxml>=5.1.0
+
+# Phase 2C+ dependencies (currently unused, needed for future phases)
+# anthropic>=0.19.0           # Phase 2D: Anthropic AI provider
+# google-genai>=0.1.0         # Phase 2D: Gemini AI provider
+# celery>=5.3.6               # Phase 2F: Async task queue
+# apscheduler>=3.10.4         # Phase 2F: Scheduled crawling
+# redis>=5.0.3                # Phase 2F: Celery broker + cache
+# playwright>=1.42.0          # Phase 2C: JS-rendered site scraping
+# pypdf>=4.1.0                # Phase 2C: PDF text extraction
+# pdfplumber>=0.11.0          # Phase 2C: PDF table extraction
+# pytesseract>=0.3.10         # Phase 2C: OCR from scanned PDFs
+# pillow>=10.2.0              # Phase 2C: Image processing for OCR
+# reportlab>=4.1.0            # Phase 2G: PDF report generation
+# openpyxl>=3.1.2             # Phase 2G: Excel export
+
+# Testing
 pytest>=8.0.0
 pytest-asyncio>=0.23.0
-email-validator>=2.0.0
-

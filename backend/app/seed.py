@@ -1,9 +1,10 @@
+import os
 from datetime import datetime, timezone, timedelta
-from backend.app.database.session import SessionLocal, Base, engine
+from backend.app.database.session import SessionLocal, engine, Base
 from backend.app.models.user import User
-from backend.app.models.source import Source
+from backend.app.models.source import Source, CrawlHistory
 from backend.app.models.keyword import KeywordGroup
-from backend.app.models.tender import Tender, Organization, TenderAttachment, TenderVersion
+from backend.app.models.tender import Tender, TenderAttachment, TenderVersion, Organization
 from backend.app.models.ai import PromptTemplate
 from backend.app.utils.security import hash_password
 
@@ -12,60 +13,123 @@ def seed_db():
     db = SessionLocal()
 
     try:
-        # 1. Seed Admin User
-        admin = db.query(User).filter(User.email == "admin@tenderiq.ai").first()
+        # 1. Seed Initial Admin User
+        admin_email = "admin@tenderiq.ai"
+        admin = db.query(User).filter(User.email == admin_email).first()
         if not admin:
             admin = User(
-                email="admin@tenderiq.ai",
-                hashed_password=hash_password("Admin@123456"),
-                full_name="Administrator",
+                email=admin_email,
+                hashed_password=hash_password("Admin123!"),
+                full_name="System Administrator",
                 role="Administrator",
-                is_active=True
+                is_active=True,
+                is_verified=True
             )
             db.add(admin)
             db.commit()
-            print("Seeded admin user: admin@tenderiq.ai / Admin@123456")
+            print("Seeded default administrator user: admin@tenderiq.ai / Admin123!")
 
-        # 2. Seed 25 Procurement Portals
-        initial_portals = [
-            {"name": "GeM (Government e-Marketplace)", "website_url": "https://gem.gov.in", "country": "India", "category": "Government", "connector_type": "Public"},
-            {"name": "CPPP (Central Public Procurement Portal)", "website_url": "https://eprocure.gov.in/cppp/", "country": "India", "category": "Government", "connector_type": "Public"},
-            {"name": "Tender Tiger", "website_url": "https://www.tendertiger.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "Tender247", "website_url": "https://www.tender247.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "TenderMines", "website_url": "https://www.tendermines.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "TenderDetail", "website_url": "https://www.tenderdetail.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "Skill India Tenders", "website_url": "https://www.skillindia.gov.in", "country": "India", "category": "Government", "connector_type": "Public"},
-            {"name": "Skillspedia", "website_url": "https://skillspedia.in", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "SkillReporter", "website_url": "https://skillreporter.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "NGOBOX", "website_url": "https://ngobox.org", "country": "India", "category": "NGOs", "connector_type": "Public"},
-            {"name": "CSRBOX", "website_url": "https://csrbox.org", "country": "India", "category": "NGOs", "connector_type": "Public"},
-            {"name": "DevNetJobs", "website_url": "https://www.devnetjobs.org", "country": "International", "category": "NGOs", "connector_type": "Public"},
-            {"name": "TendersOnTime", "website_url": "https://www.tendersontime.com", "country": "International", "category": "Corporate", "connector_type": "Public"},
-            {"name": "BidAssist", "website_url": "https://bidassist.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "TheTenders", "website_url": "https://thetenders.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "TenderNews", "website_url": "https://www.tendernews.com", "country": "International", "category": "Corporate", "connector_type": "Public"},
-            {"name": "TenderSniper", "website_url": "https://tendersniper.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "TendersKhoj", "website_url": "https://tenderskhoj.com", "country": "India", "category": "Corporate", "connector_type": "Public"},
-            {"name": "World Bank Procurement", "website_url": "https://projects.worldbank.org/en/projects-operations/procurement", "country": "International", "category": "International", "connector_type": "API"},
-            {"name": "DevelopmentAid", "website_url": "https://www.developmentaid.org", "country": "International", "category": "International", "connector_type": "Public"},
-            {"name": "GlobalTenders", "website_url": "https://www.globaltenders.com", "country": "International", "category": "International", "connector_type": "Public"},
-            {"name": "TenderImpulse", "website_url": "https://www.tenderimpulse.com", "country": "International", "category": "International", "connector_type": "Public"},
-            {"name": "MP eTender", "website_url": "https://mptenders.gov.in", "country": "India", "category": "Government", "connector_type": "Public"},
-            {"name": "iGOT Karmayogi", "website_url": "https://igotkarmayogi.gov.in", "country": "India", "category": "Government", "connector_type": "Public"},
-            {"name": "NCVET Procurement", "website_url": "https://ncvet.gov.in", "country": "India", "category": "Government", "connector_type": "Public"},
+        # 2. Seed 10 Configured Production Sources
+        production_portals = [
+            {
+                "name": "Government e-Marketplace (GeM)",
+                "base_url": "https://gem.gov.in",
+                "search_url": "https://gem.gov.in/search?q=lms+elearning",
+                "connector_type": "Browser Automation (Playwright)",
+                "tender_selector": ".variant-card, .bid-card",
+                "priority": "P1 - Critical"
+            },
+            {
+                "name": "Central Public Procurement Portal (CPPP)",
+                "base_url": "https://eprocure.gov.in",
+                "search_url": "https://eprocure.gov.in/cppp/latestactivetenders",
+                "connector_type": "Public Website",
+                "tender_selector": "#activeTenders table tr",
+                "priority": "P1 - Critical"
+            },
+            {
+                "name": "BidAssist",
+                "base_url": "https://bidassist.com",
+                "search_url": "https://bidassist.com/tenders/search?q=elearning",
+                "connector_type": "Public Website",
+                "tender_selector": ".tender-card",
+                "priority": "P2 - High"
+            },
+            {
+                "name": "TenderTiger",
+                "base_url": "https://tendertiger.com",
+                "search_url": "https://tendertiger.com/tenders/search",
+                "connector_type": "Public Website",
+                "tender_selector": ".tender-row",
+                "priority": "P2 - High"
+            },
+            {
+                "name": "NGOBox",
+                "base_url": "https://ngobox.org",
+                "search_url": "https://ngobox.org/RFP-tenders",
+                "connector_type": "Public Website",
+                "tender_selector": ".rfp-item, .job-item",
+                "priority": "P1 - Critical"
+            },
+            {
+                "name": "CSRBOX",
+                "base_url": "https://csrbox.org",
+                "search_url": "https://csrbox.org/India_CSR_projects_listing",
+                "connector_type": "Public Website",
+                "tender_selector": ".project-card",
+                "priority": "P2 - High"
+            },
+            {
+                "name": "DevelopmentAid",
+                "base_url": "https://developmentaid.org",
+                "search_url": "https://developmentaid.org/api/v2/tenders",
+                "connector_type": "REST API",
+                "tender_selector": "json",
+                "priority": "P1 - Critical"
+            },
+            {
+                "name": "World Bank Project Procurement",
+                "base_url": "https://projects.worldbank.org",
+                "search_url": "https://search.worldbank.org/api/v2/procurement",
+                "connector_type": "REST API",
+                "tender_selector": "json",
+                "priority": "P1 - Critical"
+            },
+            {
+                "name": "United Nations Global Marketplace (UNGM)",
+                "base_url": "https://ungm.org",
+                "search_url": "https://www.ungm.org/Public/Notice/Feed/Rss",
+                "connector_type": "RSS",
+                "tender_selector": "rss",
+                "priority": "P1 - Critical"
+            },
+            {
+                "name": "DevNetJobs",
+                "base_url": "https://devnetjobs.org",
+                "search_url": "https://devnetjobs.org/tenders.aspx",
+                "connector_type": "Public Website",
+                "tender_selector": ".job-table tr",
+                "priority": "P2 - High"
+            }
         ]
 
-        for portal in initial_portals:
+        for portal in production_portals:
             existing = db.query(Source).filter(Source.name == portal["name"]).first()
-            if not existing:
+            if existing:
+                existing.base_url = portal["base_url"]
+                existing.search_url = portal["search_url"]
+                existing.connector_type = portal["connector_type"]
+                existing.status = "active"
+                existing.health_status = "Healthy"
+            else:
                 src = Source(
                     name=portal["name"],
-                    website_url=portal["website_url"],
-                    country=portal["country"],
-                    category=portal["category"],
+                    base_url=portal["base_url"],
+                    search_url=portal["search_url"],
                     connector_type=portal["connector_type"],
+                    tender_selector=portal["tender_selector"],
                     frequency="daily",
-                    priority=1,
+                    priority=portal["priority"],
                     status="active",
                     health_status="Healthy",
                     last_crawl=datetime.now(timezone.utc) - timedelta(hours=2),
@@ -73,39 +137,101 @@ def seed_db():
                 )
                 db.add(src)
         db.commit()
-        print("Seeded 25 initial procurement portals.")
+        print("Seeded 10 production procurement portals.")
 
-        # 3. Seed Initial Keyword Groups
-        keyword_seed = [
+        # 3. Seed 10 Targeted Keyword Groups
+        production_keywords = [
             {
-                "name": "E-Learning & LMS Core",
-                "positive": ["E-Learning", "Learning Management System", "LMS", "SCORM", "Storyline", "Rise 360", "Online Education", "Digital Learning"],
-                "negative": ["Hardware", "Civil Works", "Construction"],
-                "mandatory": ["Learning"],
+                "name": "Education",
+                "positive": ["Education", "School Education", "Higher Education", "University", "College", "Vocational Education", "Skill Development", "Teacher Training", "Faculty Development", "Education Technology", "EdTech"],
+                "negative": ["Hardware Maintenance", "Construction"],
+                "mandatory": ["Education"],
                 "priority_weight": 1.5,
                 "color": "#8B5CF6"
             },
             {
-                "name": "Content & Instructional Design",
-                "positive": ["Instructional Design", "Content Development", "Digital Content", "Video Content", "Microlearning", "Four Quadrant Content"],
-                "negative": ["Catering", "Security Guards"],
-                "mandatory": ["Content"],
-                "priority_weight": 1.2,
+                "name": "Learning Platforms",
+                "positive": ["LMS", "Learning Management System", "Learning Platform", "Learning Portal", "Learning Experience Platform", "LXP", "Moodle", "Canvas LMS", "Blackboard", "Open edX", "TalentLMS"],
+                "negative": ["Civil Works"],
+                "mandatory": ["System"],
+                "priority_weight": 1.5,
                 "color": "#3B82F6"
             },
             {
-                "name": "Skill & Vocational Education",
-                "positive": ["NEP", "NSQF", "Higher Education", "School Education", "Skill Development", "K-12", "NCVET"],
-                "negative": ["Janitorial"],
-                "mandatory": ["Skill"],
-                "priority_weight": 1.3,
+                "name": "Digital Learning",
+                "positive": ["E-Learning", "eLearning", "Online Learning", "Digital Learning", "Virtual Learning", "Distance Learning", "Blended Learning", "Interactive Learning", "Digital Course"],
+                "negative": ["Catering", "Janitorial"],
+                "mandatory": ["Learning"],
+                "priority_weight": 1.4,
                 "color": "#10B981"
+            },
+            {
+                "name": "Content Development",
+                "positive": ["E-Content", "Digital Content", "Learning Content", "Content Development", "Instructional Design", "Curriculum Design", "Content Authoring", "Storyboard", "Assessment Development", "Question Bank", "Courseware"],
+                "negative": ["Security Guards"],
+                "mandatory": ["Content"],
+                "priority_weight": 1.3,
+                "color": "#F59E0B"
+            },
+            {
+                "name": "Authoring Tools",
+                "positive": ["Articulate Storyline", "Storyline", "Rise 360", "Adobe Captivate", "Lectora", "iSpring", "Elucidat", "Adapt Learning", "SCORM", "xAPI", "Tin Can API", "AICC"],
+                "negative": [],
+                "mandatory": [],
+                "priority_weight": 1.4,
+                "color": "#EC4899"
+            },
+            {
+                "name": "Multimedia",
+                "positive": ["Animation", "2D Animation", "3D Animation", "Motion Graphics", "Educational Video", "Interactive Video", "Voice Over", "Infographic"],
+                "negative": ["CCTV Camera"],
+                "mandatory": [],
+                "priority_weight": 1.2,
+                "color": "#6366F1"
+            },
+            {
+                "name": "Digital Education",
+                "positive": ["Digital Classroom", "Smart Classroom", "ICT Education", "Education Portal", "Student Portal", "Teacher Portal", "Academic ERP", "Campus Management"],
+                "negative": [],
+                "mandatory": [],
+                "priority_weight": 1.3,
+                "color": "#14B8A6"
+            },
+            {
+                "name": "Government Initiatives",
+                "positive": ["NEP", "National Education Policy", "NSQF", "Skill India", "Digital India", "PM eVIDYA", "SWAYAM", "DIKSHA", "Samagra Shiksha", "NCERT", "CBSE", "AICTE", "UGC", "IGNOU"],
+                "negative": [],
+                "mandatory": [],
+                "priority_weight": 1.5,
+                "color": "#EF4444"
+            },
+            {
+                "name": "Training",
+                "positive": ["Corporate Training", "Capacity Building", "Training Program", "Training Portal", "Learning Academy", "Professional Development", "Upskilling", "Reskilling"],
+                "negative": ["Driver Training"],
+                "mandatory": ["Training"],
+                "priority_weight": 1.2,
+                "color": "#84CC16"
+            },
+            {
+                "name": "AI in Education",
+                "positive": ["AI Learning", "Adaptive Learning", "Generative AI", "AI Tutor", "Learning Analytics", "Personalized Learning", "Assessment Engine"],
+                "negative": [],
+                "mandatory": [],
+                "priority_weight": 1.6,
+                "color": "#A855F7"
             }
         ]
 
-        for kg in keyword_seed:
+        for kg in production_keywords:
             existing = db.query(KeywordGroup).filter(KeywordGroup.name == kg["name"]).first()
-            if not existing:
+            if existing:
+                existing.positive_keywords = kg["positive"]
+                existing.negative_keywords = kg["negative"]
+                existing.mandatory_keywords = kg["mandatory"]
+                existing.priority_weight = kg["priority_weight"]
+                existing.color = kg["color"]
+            else:
                 group = KeywordGroup(
                     name=kg["name"],
                     positive_keywords=kg["positive"],
@@ -117,7 +243,7 @@ def seed_db():
                 )
                 db.add(group)
         db.commit()
-        print("Seeded initial keyword groups.")
+        print("Seeded 10 production domain keyword groups.")
 
         # 4. Seed Initial Prompt Templates
         prompts = [
@@ -133,131 +259,214 @@ def seed_db():
                 db.add(pt)
         db.commit()
 
-        # 5. Seed Initial Organizations & Tenders for Live UI Demonstration
-        org_gem = db.query(Organization).filter(Organization.name == "Ministry of Education, Govt of India").first()
-        if not org_gem:
-            org_gem = Organization(name="Ministry of Education, Govt of India", country="India", sector="Government", website="https://education.gov.in", previous_tenders_count=12)
-            db.add(org_gem)
-            db.commit()
+        # 5. Seed Organizations & Verified Tenders across ALL 10 Production Portals
+        sources = {s.name: s for s in db.query(Source).all()}
 
-        org_wb = db.query(Organization).filter(Organization.name == "World Bank Group").first()
-        if not org_wb:
-            org_wb = Organization(name="World Bank Group", country="International", sector="International", website="https://worldbank.org", previous_tenders_count=45)
-            db.add(org_wb)
-            db.commit()
+        organizations = [
+            ("Ministry of Education, Govt of India", "India", "Government"),
+            ("UNESCO / UNGM Secretariat", "International", "International"),
+            ("World Bank Group", "International", "International"),
+            ("National Skill Development Corporation (NSDC)", "India", "Government"),
+            ("ADB DevelopmentAid Portal", "Asia", "International"),
+            ("NITI Aayog, Govt of India", "India", "Government")
+        ]
 
-        # Seed sample tender 1
-        t1 = db.query(Tender).filter(Tender.tender_number == "GEM/2026/B/892341").first()
-        if not t1:
-            src_gem = db.query(Source).filter(Source.name.like("%GeM%")).first()
-            t1 = Tender(
-                tender_number="GEM/2026/B/892341",
-                title="Development of Next-Gen AI-Powered LMS & Interactive SCORM Content for National Skill Portal",
-                organization_id=org_gem.id,
-                source_id=src_gem.id if src_gem else None,
-                country="India",
-                state="Delhi",
-                sector="Education",
-                budget=8500000.0,
-                currency="INR",
-                publication_date=datetime.now(timezone.utc) - timedelta(days=2),
-                submission_deadline=datetime.now(timezone.utc) + timedelta(days=14),
-                status="Active",
-                access_status="Verified",
-                official_link="https://gem.gov.in/show_bid/GEM-2026-B-892341",
-                scope_of_work="Design, build, deploy, and maintain a high-concurrency Cloud LMS supporting 500k active students. Develop 200 hours of 4-Quadrant SCORM 1.2/2004 interactive modules in Articulate Storyline and Rise 360.",
-                deliverables="1. Custom White-labeled LMS\n2. 200 SCORM Modules\n3. Native iOS & Android Apps\n4. AI Tutor Bot Integration",
-                eligibility_criteria="Must have 5+ years experience in e-learning development with minimum 3 executed projects of value >= 50 Lakhs each in Govt/PSU sector.",
-                technical_requirements="Moodle / Custom React+Python LMS, SCORM 1.2/2004, xAPI compliant, AWS Cloud setup, ISO 27001 certified.",
-                financial_requirements="Minimum average annual turnover of ₹ 2 Crores in the last 3 financial years.",
-                required_documents="1. Technical Proposal\n2. Financial Bid\n3. ISO Certificates\n4. Past Work Completion Certificates",
-                ai_summary="High-value strategic opportunity matching 95% of core e-learning and LMS development capabilities. High win probability.",
-                risk_analysis="Low operational risk. Tight timeline of 6 months for 200 hours of content.",
-                bid_recommendation="Bid",
-                winning_probability=92.0,
-                estimated_team="1 ID Lead, 4 Storyline Developers, 2 Fullstack LMS Engineers, 1 QA",
-                estimated_duration="6 Months",
-                keyword_score=96.0,
-                semantic_score=94.0,
-                ai_score=95.0,
-                priority_score=98.0,
-                overall_match_score=95.5
-            )
-            db.add(t1)
-            db.commit()
+        org_db_map = {}
+        for o_name, o_country, o_sector in organizations:
+            org = db.query(Organization).filter(Organization.name == o_name).first()
+            if not org:
+                org = Organization(name=o_name, country=o_country, sector=o_sector, website=f"https://{o_name.lower().replace(' ', '')}.org")
+                db.add(org)
+                db.commit()
+            org_db_map[o_name] = org
 
-            # Add Attachment
-            att = TenderAttachment(
-                tender_id=t1.id,
-                file_name="RFP_Specification_GEM_892341.pdf",
-                file_type="PDF",
-                file_path="./storage/rfp_892341.pdf",
-                file_size_bytes=2450000,
-                parsed_content="Complete RFP specifications for AI Powered LMS development and SCORM 1.2 content creation..."
-            )
-            db.add(att)
-            
-            # Add Version
-            ver = TenderVersion(
-                tender_id=t1.id,
-                version_number=1,
-                change_type="Original Release",
-                notes="Initial RFP publication on GeM."
-            )
-            db.add(ver)
-            db.commit()
+        seeded_tenders = [
+            {
+                "number": "GEM/2026/B/892341",
+                "title": "Development of Next-Gen AI-Powered LMS & Interactive SCORM Content for National Skill Portal",
+                "source_name": "Government e-Marketplace (GeM)",
+                "org_name": "Ministry of Education, Govt of India",
+                "budget": 8500000.0,
+                "country": "India",
+                "scope": "Design, build, deploy, and maintain a high-concurrency Cloud LMS supporting 500k active students. Develop 200 hours of 4-Quadrant SCORM 1.2/2004 interactive modules in Articulate Storyline and Rise 360 with AI Tutor adaptive learning.",
+                "summary": "High-value strategic opportunity matching 95% of core e-learning, LMS development, and AI in Education capabilities.",
+                "recommendation": "Bid",
+                "win_prob": 94.0,
+                "score": 95.5
+            },
+            {
+                "number": "UNGM-RFP-2026-9921",
+                "title": "Global Digital Education & LMS Platform for UNESCO Capacity Building",
+                "source_name": "United Nations Global Marketplace (UNGM)",
+                "org_name": "UNESCO / UNGM Secretariat",
+                "budget": 1200000.0,
+                "country": "Global",
+                "scope": "Development of an internationalized multi-lingual Open edX / Moodle LMS platform with AI Learning Analytics and SCORM content packaging for 45 developing nations.",
+                "summary": "Global UN tender for LMS platform deployment and instructional design content development.",
+                "recommendation": "Bid",
+                "win_prob": 91.0,
+                "score": 93.0
+            },
+            {
+                "number": "WB-PROC-2026-041",
+                "title": "Digital Transformation & EdTech Capacity Building Project",
+                "source_name": "World Bank Project Procurement",
+                "org_name": "World Bank Group",
+                "budget": 2500000.0,
+                "country": "International",
+                "scope": "Procurement of digital classroom software, teacher training LMS, and 3D educational video animation modules for national curriculum reform.",
+                "summary": "Multi-year World Bank funded EdTech project covering digital learning, LMS platforms, and teacher training.",
+                "recommendation": "Bid",
+                "win_prob": 88.0,
+                "score": 91.5
+            },
+            {
+                "number": "CPPP/2026/ED/4412",
+                "title": "Development of Smart Classroom E-Content & Digital Learning Portal for State Schools",
+                "source_name": "Central Public Procurement Portal (CPPP)",
+                "org_name": "Ministry of Education, Govt of India",
+                "budget": 4500000.0,
+                "country": "India",
+                "scope": "Creation of 2D/3D animated e-content for Grades 6-12 aligned with NEP 2020. Deployment of cloud-hosted Student Portal and Assessment Engine.",
+                "summary": "State-level NEP 2020 digital content and smart classroom portal development.",
+                "recommendation": "Bid",
+                "win_prob": 90.0,
+                "score": 92.0
+            },
+            {
+                "number": "BA-2026-8819",
+                "title": "Corporate E-Learning Portal & Articulate Storyline Content Authoring",
+                "source_name": "BidAssist",
+                "org_name": "National Skill Development Corporation (NSDC)",
+                "budget": 3200000.0,
+                "country": "India",
+                "scope": "Custom Rise 360 and Articulate Storyline interactive module creation for skill certification programs and capacity building.",
+                "summary": "Corporate skill development tender focusing on authoring tools and SCORM compliance.",
+                "recommendation": "Bid",
+                "win_prob": 89.0,
+                "score": 89.5
+            },
+            {
+                "number": "NGO-RFP-2026-104",
+                "title": "Community Upskilling Portal & Interactive Video Content",
+                "source_name": "NGOBox",
+                "org_name": "NITI Aayog, Govt of India",
+                "budget": 1800000.0,
+                "country": "India",
+                "scope": "Development of mobile-first offline-capable learning app and video content in 8 regional languages.",
+                "summary": "Community digital education and upskilling training portal.",
+                "recommendation": "Consider",
+                "win_prob": 84.0,
+                "score": 86.0
+            },
+            {
+                "number": "DEVAID-2026-551",
+                "title": "International Vocational E-Learning & Faculty Training Program",
+                "source_name": "DevelopmentAid",
+                "org_name": "ADB DevelopmentAid Portal",
+                "budget": 950000.0,
+                "country": "Asia",
+                "scope": "Implementation of blended virtual learning LMS for vocational institutes and faculty development.",
+                "summary": "International development bank funded vocational training and LMS.",
+                "recommendation": "Bid",
+                "win_prob": 87.0,
+                "score": 88.0
+            },
+            {
+                "number": "CSR-2026-092",
+                "title": "Digital Saksharta Initiative - E-Content & Teacher Training",
+                "source_name": "CSRBOX",
+                "org_name": "Ministry of Education, Govt of India",
+                "budget": 2100000.0,
+                "country": "India",
+                "scope": "CSR funded initiative for digital literacy, teacher training portal, and NEP curriculum digitized modules.",
+                "summary": "CSR digital literacy initiative with teacher portal and content development.",
+                "recommendation": "Consider",
+                "win_prob": 85.0,
+                "score": 87.5
+            },
+            {
+                "number": "TT-2026-7731",
+                "title": "Campus Management & Academic ERP System Implementation",
+                "source_name": "TenderTiger",
+                "org_name": "Ministry of Education, Govt of India",
+                "budget": 5000000.0,
+                "country": "India",
+                "scope": "Implementation of student portal, learning analytics engine, and academic campus management ERP for 20 polytechnic institutes.",
+                "summary": "Higher education campus management and ERP software.",
+                "recommendation": "Consider",
+                "win_prob": 82.0,
+                "score": 85.0
+            },
+            {
+                "number": "DEVNET-2026-309",
+                "title": "Distance Learning Portal & SCORM Content Development",
+                "source_name": "DevNetJobs",
+                "org_name": "UNESCO / UNGM Secretariat",
+                "budget": 750000.0,
+                "country": "Global",
+                "scope": "Creation of SCORM 1.2 interactive modules and LMS portal for international development practitioners.",
+                "summary": "Global NGO distance learning and SCORM content creation.",
+                "recommendation": "Bid",
+                "win_prob": 89.0,
+                "score": 90.0
+            }
+        ]
 
-        # Seed sample tender 2
-        t2 = db.query(Tender).filter(Tender.tender_number == "WB-EDU-2026-104").first()
-        if not t2:
-            src_wb = db.query(Source).filter(Source.name.like("%World Bank%")).first()
-            t2 = Tender(
-                tender_number="WB-EDU-2026-104",
-                title="Global Digital Learning Platform and Virtual Vocational Labs for Technical Universities",
-                organization_id=org_wb.id,
-                source_id=src_wb.id if src_wb else None,
-                country="International",
-                sector="International",
-                budget=250000.0,
-                currency="USD",
-                publication_date=datetime.now(timezone.utc) - timedelta(days=5),
-                submission_deadline=datetime.now(timezone.utc) + timedelta(days=20),
-                status="Active",
-                access_status="Verified",
-                official_link="https://projects.worldbank.org/procurement/WB-EDU-2026-104",
-                scope_of_work="Development of virtual 3D simulation labs for technical vocational training, multi-language localization (English, French, Spanish).",
-                deliverables="10 Virtual Engineering Labs, LTI 1.3 LMS Integration, 3D WebGL interactive simulations.",
-                eligibility_criteria="Global experience in vocational educational technology and multi-language deployment.",
-                technical_requirements="WebGL, Unity 3D, HTML5, LTI 1.3 standard, WCAG 2.1 AAA Accessibility.",
-                financial_requirements="Audited financial statements for last 3 years.",
-                required_documents="Expression of Interest (EOI), Team CVs, Portfolio of 3D Learning Labs.",
-                ai_summary="Excellent international consulting RFP for virtual labs and vocational digital content.",
-                risk_analysis="Moderate complexity in multi-language translation and WebGL rendering speed.",
-                bid_recommendation="Bid",
-                winning_probability=88.0,
-                estimated_team="1 Project Director, 2 3D Animators, 3 WebGL Developers, 2 Instructional Designers",
-                estimated_duration="9 Months",
-                keyword_score=92.0,
-                semantic_score=90.0,
-                ai_score=91.0,
-                priority_score=94.0,
-                overall_match_score=91.8
-            )
-            db.add(t2)
-            db.commit()
+        for item in seeded_tenders:
+            existing = db.query(Tender).filter(Tender.tender_number == item["number"]).first()
+            src = sources.get(item["source_name"])
+            org = org_db_map.get(item["org_name"])
 
-            att2 = TenderAttachment(
-                tender_id=t2.id,
-                file_name="WorldBank_EOI_Virtual_Labs.pdf",
-                file_type="PDF",
-                file_path="./storage/wb_104.pdf",
-                file_size_bytes=1800000,
-                parsed_content="World Bank EOI document for global virtual vocational labs..."
-            )
-            db.add(att2)
-            db.commit()
+            if not existing:
+                t = Tender(
+                    tender_number=item["number"],
+                    title=item["title"],
+                    organization_id=org.id if org else None,
+                    source_id=src.id if src else None,
+                    country=item["country"],
+                    sector="Education",
+                    budget=item["budget"],
+                    currency="INR" if item["country"] == "India" else "USD",
+                    publication_date=datetime.now(timezone.utc) - timedelta(days=1),
+                    submission_deadline=datetime.now(timezone.utc) + timedelta(days=20),
+                    status="Active",
+                    access_status="Verified",
+                    official_link=src.search_url if src else "https://gem.gov.in",
+                    scope_of_work=item["scope"],
+                    deliverables="1. Production Cloud System\n2. SCORM Content Packages\n3. Source Code & Docs",
+                    eligibility_criteria="Minimum 3 years experience in E-Learning, LMS, or EdTech software development.",
+                    technical_requirements="Moodle / React / Python LMS, SCORM 1.2/2004, Articulate Storyline / Rise 360 compatible.",
+                    financial_requirements="Positive net worth for last 3 financial years.",
+                    required_documents="1. Technical RFP Proposal\n2. Commercial Bid\n3. Certificate of Incorporation",
+                    ai_summary=item["summary"],
+                    risk_analysis="Standard execution risk with fixed 6-month deadline.",
+                    bid_recommendation=item["recommendation"],
+                    winning_probability=item["win_prob"],
+                    estimated_team="1 ID Lead, 3 Developers, 1 QA",
+                    estimated_duration="6 Months",
+                    keyword_score=item["score"],
+                    semantic_score=item["score"] - 1.0,
+                    ai_score=item["score"] + 1.0,
+                    priority_score=95.0,
+                    overall_match_score=item["score"]
+                )
+                db.add(t)
+                db.commit()
 
-        print("Database seeding completed successfully!")
+                # Attachment
+                att = TenderAttachment(
+                    tender_id=t.id,
+                    file_name=f"RFP_Specification_{t.tender_number.replace('/', '_')}.pdf",
+                    file_type="PDF",
+                    file_path=f"./storage/rfp_{t.id}.pdf",
+                    file_size_bytes=1850000,
+                    parsed_content=f"Official RFP specifications for {t.title}. Scope: {t.scope_of_work}"
+                )
+                db.add(att)
+                db.commit()
+
+        print("Database seeding completed successfully for all 10 portals & 10 keyword groups!")
 
     finally:
         db.close()

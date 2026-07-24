@@ -15,4 +15,7 @@ class KeywordGroup(Base):
     language = Column(String(50), default="English")
     status = Column(String(50), default="active")
     color = Column(String(50), default="#3B82F6")
+    routed_teams = Column(JSON, nullable=True)
+    routed_roles = Column(JSON, nullable=True)
+    routed_recipients = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

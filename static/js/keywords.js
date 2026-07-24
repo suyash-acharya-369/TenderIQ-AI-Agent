@@ -2,6 +2,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     if (window.location.pathname.includes("keyword")) {
         loadKeywords();
+        injectKeywordGroupModal();
+        bindNewKeywordButton();
     }
 });
 
@@ -18,8 +20,13 @@ async function loadKeywords() {
 }
 
 function renderKeywordGroups(groups) {
-    const container = document.getElementById("keywords-container") || document.querySelector("main");
-    if (!container) return;
+    const wrapper = document.getElementById("keywords-grid") || document.querySelector("main");
+    if (!wrapper) return;
+
+    if (groups.length === 0) {
+        wrapper.innerHTML = `<p class="p-md text-xs text-secondary">No keyword groups created yet.</p>`;
+        return;
+    }
 
     const cardsHtml = groups.map(g => `
         <div class="p-lg bg-surface-container-lowest border border-outline-variant rounded-xl space-y-md shadow-sm hover:border-primary transition-all">
@@ -53,8 +60,109 @@ function renderKeywordGroups(groups) {
         </div>
     `).join("");
 
-    const wrapper = document.getElementById("keywords-grid");
-    if (wrapper) wrapper.innerHTML = cardsHtml;
+    wrapper.innerHTML = cardsHtml;
+}
+
+function bindNewKeywordButton() {
+    const btns = document.querySelectorAll("button");
+    btns.forEach(btn => {
+        if (btn.textContent.toLowerCase().includes("group") || btn.textContent.toLowerCase().includes("keyword")) {
+            btn.onclick = (e) => {
+                e.preventDefault();
+                openKeywordModal();
+            };
+        }
+    });
+}
+
+function injectKeywordGroupModal() {
+    if (document.getElementById("keyword-group-modal")) return;
+
+    const modalHtml = `
+        <div id="keyword-group-modal" class="hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-md">
+            <div class="bg-surface-container-lowest max-w-lg w-full rounded-xl p-xl shadow-2xl space-y-lg relative text-on-surface">
+                <button onclick="closeKeywordModal()" class="absolute top-md right-md text-outline hover:text-on-surface">
+                    <span class="material-symbols-outlined text-2xl">close</span>
+                </button>
+
+                <h2 class="font-bold text-xl text-on-surface flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-primary">label</span>
+                    Create New Keyword Group
+                </h2>
+
+                <form id="keyword-group-form" class="space-y-md" onsubmit="saveKeywordGroup(event)">
+                    <div class="space-y-xs">
+                        <label class="text-xs font-bold text-on-surface block">Group Name *</label>
+                        <input type="text" id="kw-name" required class="w-full p-sm border border-outline-variant rounded-lg text-sm bg-surface" placeholder="e.g. SCORM Content & E-Learning" />
+                    </div>
+
+                    <div class="space-y-xs">
+                        <label class="text-xs font-bold text-on-surface block">Positive Keywords (comma-separated) *</label>
+                        <input type="text" id="kw-positive" required class="w-full p-sm border border-outline-variant rounded-lg text-sm bg-surface" placeholder="LMS, E-Learning, SCORM, Storyline" />
+                    </div>
+
+                    <div class="space-y-xs">
+                        <label class="text-xs font-bold text-on-surface block">Negative / Exclude Keywords (comma-separated)</label>
+                        <input type="text" id="kw-negative" class="w-full p-sm border border-outline-variant rounded-lg text-sm bg-surface" placeholder="Civil Works, Construction, Hardware" />
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-md">
+                        <div class="space-y-xs">
+                            <label class="text-xs font-bold text-on-surface block">Priority Weight</label>
+                            <input type="number" step="0.1" id="kw-weight" value="1.5" class="w-full p-sm border border-outline-variant rounded-lg text-sm bg-surface" />
+                        </div>
+                        <div class="space-y-xs">
+                            <label class="text-xs font-bold text-on-surface block">Badge Color</label>
+                            <input type="color" id="kw-color" value="#8B5CF6" class="w-full h-10 p-xs border border-outline-variant rounded-lg bg-surface" />
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-md pt-md border-t border-outline-variant">
+                        <button type="button" onclick="closeKeywordModal()" class="px-md py-sm bg-surface-container-high font-semibold text-sm rounded-lg">Cancel</button>
+                        <button type="submit" class="px-md py-sm bg-primary text-on-primary font-semibold text-sm rounded-lg hover:bg-surface-tint">Create Group</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+}
+
+function openKeywordModal() {
+    const modal = document.getElementById("keyword-group-modal");
+    if (modal) modal.classList.remove("hidden");
+}
+
+function closeKeywordModal() {
+    const modal = document.getElementById("keyword-group-modal");
+    if (modal) modal.classList.add("hidden");
+}
+
+async function saveKeywordGroup(e) {
+    e.preventDefault();
+    const name = document.getElementById("kw-name").value.trim();
+    const positive = document.getElementById("kw-positive").value.split(",").map(s => s.trim()).filter(Boolean);
+    const negative = document.getElementById("kw-negative").value.split(",").map(s => s.trim()).filter(Boolean);
+    const priority_weight = parseFloat(document.getElementById("kw-weight").value) || 1.0;
+    const color = document.getElementById("kw-color").value || "#3B82F6";
+
+    try {
+        const res = await fetch("/api/v1/keywords", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, positive_keywords: positive, negative_keywords: negative, priority_weight, color })
+        });
+
+        if (res.ok) {
+            closeKeywordModal();
+            loadKeywords();
+        } else {
+            const err = await res.json();
+            alert(`Error: ${err.detail || 'Failed to create keyword group'}`);
+        }
+    } catch (e) {
+        console.error("Save keyword group error:", e);
+    }
 }
 
 async function deleteKeywordGroup(id) {
