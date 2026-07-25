@@ -41,8 +41,13 @@ class EventBus:
             db.commit()
             db.refresh(log)
 
-            # Fire and forget processing
-            asyncio.create_task(self._process_event_async(log.id, event))
+            # Fire and forget processing if loop is running, else run synchronously
+            try:
+                loop = asyncio.get_running_loop()
+                loop.create_task(self._process_event_async(log.id, event))
+            except RuntimeError:
+                # No running loop in this thread (e.g. sync scheduler or setup)
+                asyncio.run(self._process_event_async(log.id, event))
         except Exception as e:
             logger.error(f"Error dispatching event: {str(e)}")
             db.rollback()
