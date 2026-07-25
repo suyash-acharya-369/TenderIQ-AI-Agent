@@ -332,11 +332,15 @@
 
                     <!-- Tabs -->
                     <div class="border-b border-slate-200">
-                        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                        <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
                             <button id="tab-btn-inapp" class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('inapp')">In-App Alerts</button>
                             <button id="tab-btn-logs" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('logs')">Delivery Logs</button>
                             <button id="tab-btn-settings" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('settings')">Provider Settings</button>
                             <button id="tab-btn-rules" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('rules')">Routing Rules</button>
+                            <button id="tab-btn-email" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('email')">📧 Email Delivery</button>
+                            <button id="tab-btn-scheduler" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('scheduler')">⏱️ Scheduler</button>
+                            <button id="tab-btn-ops" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('ops')">⚙️ Ops & Health</button>
+                            <button id="tab-btn-aicost" class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('aicost')">💰 AI Costs</button>
                         </nav>
                     </div>
 
@@ -443,6 +447,158 @@
                                     <!-- Populated via JS -->
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    <!-- Email Delivery Dashboard Tab -->
+                    <div id="tab-email" class="hidden space-y-lg">
+                        <!-- Provider Status -->
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="font-semibold text-slate-800 text-lg">📧 Email Delivery Dashboard</h2>
+                                <button onclick="loadEmailDashboard()" class="text-slate-400 hover:text-slate-600">
+                                    <span class="material-symbols-outlined text-sm">refresh</span>
+                                </button>
+                            </div>
+                            <div id="email-provider-status" class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                <p class="text-sm text-slate-500">Loading provider status...</p>
+                            </div>
+
+                            <!-- Statistics Cards -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-blue-50 rounded-lg p-4 text-center">
+                                    <p id="stat-total" class="text-2xl font-bold text-blue-700">—</p>
+                                    <p class="text-xs text-blue-500 mt-1">Total Emails</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4 text-center">
+                                    <p id="stat-success" class="text-2xl font-bold text-green-700">—</p>
+                                    <p class="text-xs text-green-500 mt-1">Successful</p>
+                                </div>
+                                <div class="bg-red-50 rounded-lg p-4 text-center">
+                                    <p id="stat-failed" class="text-2xl font-bold text-red-700">—</p>
+                                    <p class="text-xs text-red-500 mt-1">Failed</p>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-4 text-center">
+                                    <p id="stat-pending" class="text-2xl font-bold text-yellow-700">—</p>
+                                    <p class="text-xs text-yellow-500 mt-1">Pending</p>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex flex-wrap gap-3 mb-6">
+                                <button id="btn-send-test" onclick="sendTestEmail()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">send</span> Send Test Email
+                                </button>
+                                <button id="btn-run-series" onclick="runTestSeries()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">playlist_play</span> Run Test Series (6 Emails)
+                                </button>
+                                <button onclick="checkProviderStatus()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg font-medium hover:bg-slate-200 transition-colors flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">health_and_safety</span> Check Provider
+                                </button>
+                            </div>
+
+                            <!-- Action Result -->
+                            <div id="email-action-result" class="hidden mb-6 p-4 rounded-lg border"></div>
+
+                            <!-- Recent Email Logs -->
+                            <h3 class="font-semibold text-slate-700 mb-3">Recent Deliveries</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm whitespace-nowrap">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 border-b border-slate-200">
+                                            <th class="px-3 py-2 font-medium">Recipient</th>
+                                            <th class="px-3 py-2 font-medium">Subject</th>
+                                            <th class="px-3 py-2 font-medium">Provider</th>
+                                            <th class="px-3 py-2 font-medium">Status</th>
+                                            <th class="px-3 py-2 font-medium">Message ID</th>
+                                            <th class="px-3 py-2 font-medium">Retries</th>
+                                            <th class="px-3 py-2 font-medium">Time</th>
+                                            <th class="px-3 py-2 font-medium">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="email-logs-tbody" class="divide-y divide-slate-100">
+                                        <tr><td colspan="8" class="px-3 py-4 text-center text-slate-400">No email logs yet</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Scheduler Dashboard Tab -->
+                    <div id="tab-scheduler" class="hidden space-y-lg">
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="font-semibold text-slate-800 text-lg">⏱️ Background Job Scheduler Dashboard</h2>
+                                <button onclick="loadSchedulerDashboard()" class="text-slate-400 hover:text-slate-600">
+                                    <span class="material-symbols-outlined text-sm">refresh</span>
+                                </button>
+                            </div>
+                            <!-- Action Trigger Suite -->
+                            <div class="mb-6 p-4 bg-slate-50 rounded-lg border">
+                                <h3 class="text-sm font-semibold text-slate-700 mb-2">Phase 10: Manual Trigger Control Suite</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <button onclick="triggerJob('Daily Tender Crawl')" class="bg-indigo-600 text-white text-xs px-3 py-1.5 rounded hover:bg-indigo-700">Trigger Crawl</button>
+                                    <button onclick="triggerJob('Daily AI Analysis')" class="bg-purple-600 text-white text-xs px-3 py-1.5 rounded hover:bg-purple-700">Trigger AI Analysis</button>
+                                    <button onclick="triggerJob('Daily Digest Email')" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded hover:bg-emerald-700">Trigger Daily Digest</button>
+                                    <button onclick="triggerJob('Source Health Check')" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700">Trigger Source Health</button>
+                                    <button onclick="triggerJob('Failed Crawl Retry')" class="bg-amber-600 text-white text-xs px-3 py-1.5 rounded hover:bg-amber-700">Trigger Crawl Retry</button>
+                                    <button onclick="triggerJob('PDF Cleanup')" class="bg-slate-600 text-white text-xs px-3 py-1.5 rounded hover:bg-slate-700">Trigger PDF Cleanup</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm whitespace-nowrap">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 border-b">
+                                            <th class="px-3 py-2">Job Name</th>
+                                            <th class="px-3 py-2">Status</th>
+                                            <th class="px-3 py-2">Last Run</th>
+                                            <th class="px-3 py-2">Duration</th>
+                                            <th class="px-3 py-2">Summary</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="scheduler-history-tbody" class="divide-y divide-slate-100">
+                                        <tr><td colspan="5" class="px-3 py-4 text-center text-slate-400">Loading scheduler history...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operations & System Health Tab -->
+                    <div id="tab-ops" class="hidden space-y-lg">
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="font-semibold text-slate-800 text-lg">⚙️ System Operations & Resource Health</h2>
+                                <button onclick="loadOperationsDashboard()" class="text-slate-400 hover:text-slate-600">
+                                    <span class="material-symbols-outlined text-sm">refresh</span>
+                                </button>
+                            </div>
+                            <div id="ops-stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-slate-50 p-4 rounded-lg text-center"><p id="ops-cpu" class="text-xl font-bold text-slate-700">—</p><p class="text-xs text-slate-500">CPU Usage</p></div>
+                                <div class="bg-slate-50 p-4 rounded-lg text-center"><p id="ops-ram" class="text-xl font-bold text-slate-700">—</p><p class="text-xs text-slate-500">RAM Usage</p></div>
+                                <div class="bg-slate-50 p-4 rounded-lg text-center"><p id="ops-disk" class="text-xl font-bold text-slate-700">—</p><p class="text-xs text-slate-500">Disk Space</p></div>
+                                <div class="bg-slate-50 p-4 rounded-lg text-center"><p id="ops-ws" class="text-xl font-bold text-slate-700">—</p><p class="text-xs text-slate-500">WebSocket Clients</p></div>
+                            </div>
+                            <!-- Phase 24: Backup Controls -->
+                            <div class="border-t pt-4 flex gap-3">
+                                <button onclick="createBackup()" class="bg-indigo-600 text-white text-xs px-4 py-2 rounded font-medium hover:bg-indigo-700">📦 Create System Backup Zip</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Cost Monitoring Tab -->
+                    <div id="tab-aicost" class="hidden space-y-lg">
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="font-semibold text-slate-800 text-lg">💰 AI Cost & Token Usage Monitoring</h2>
+                                <button onclick="loadAICostMonitoring()" class="text-slate-400 hover:text-slate-600">
+                                    <span class="material-symbols-outlined text-sm">refresh</span>
+                                </button>
+                            </div>
+                            <div id="ai-cost-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-indigo-50 p-4 rounded-lg text-center"><p id="cost-total-requests" class="text-xl font-bold text-indigo-700">—</p><p class="text-xs text-indigo-500">Total Requests</p></div>
+                                <div class="bg-purple-50 p-4 rounded-lg text-center"><p id="cost-total-tokens" class="text-xl font-bold text-purple-700">—</p><p class="text-xs text-purple-500">Tokens Consumed</p></div>
+                                <div class="bg-emerald-50 p-4 rounded-lg text-center"><p id="cost-total-usd" class="text-xl font-bold text-emerald-700">$0.00</p><p class="text-xs text-emerald-500">Total Cost (USD)</p></div>
+                                <div class="bg-blue-50 p-4 rounded-lg text-center"><p id="cost-avg-latency" class="text-xl font-bold text-blue-700">—</p><p class="text-xs text-blue-500">Avg Latency (s)</p></div>
+                            </div>
                         </div>
                     </div>
                 </div>
