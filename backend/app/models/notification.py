@@ -11,10 +11,15 @@ class NotificationLog(Base):
     recipient = Column(String(255), nullable=False)
     subject = Column(String(255), nullable=True)
     content = Column(Text, nullable=False)
-    status = Column(String(50), default="sent")   # sent, failed, pending
+    status = Column(String(50), default="sent")   # sent, failed, pending, retrying
     retry_count = Column(Integer, default=0)
     error_message = Column(Text, nullable=True)
+    message_id = Column(String(255), nullable=True)
+    provider = Column(String(100), nullable=True)
+    http_status = Column(Integer, nullable=True)
+    provider_response = Column(Text, nullable=True)
     sent_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    delivered_at = Column(DateTime, nullable=True)
     opened_at = Column(DateTime, nullable=True)
     clicked_at = Column(DateTime, nullable=True)
 

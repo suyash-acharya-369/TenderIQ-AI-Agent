@@ -20,7 +20,10 @@ class Source(Base):
     pdf_selector = Column(String(255), nullable=True)
     pagination_selector = Column(String(255), nullable=True)
     
-    frequency = Column(String(50), default="daily")  # daily, hourly, manual
+    frequency = Column(String(50), default="daily")  # daily, hourly, manual, custom
+    cron_expression = Column(String(100), nullable=True, default="0 0 * * *")  # Cron schedule
+    timezone = Column(String(100), default="UTC")
+    is_enabled = Column(Boolean, default=True)
     priority = Column(Integer, default=1)
     status = Column(String(50), default="active")  # active, paused, failing
     health_status = Column(String(50), default="Healthy")  # Healthy, Warning, Error
@@ -28,8 +31,20 @@ class Source(Base):
     timeout_seconds = Column(Integer, default=30)
     retry_count = Column(Integer, default=3)
     
+    # Incremental Crawling & State Tracking
     last_crawl = Column(DateTime, nullable=True)
+    last_successful_crawl = Column(DateTime, nullable=True)
     next_crawl = Column(DateTime, nullable=True)
+    last_tender_id = Column(String(255), nullable=True)
+    etag = Column(String(255), nullable=True)
+    last_modified_header = Column(String(255), nullable=True)
+    
+    # Source Health Metrics
+    avg_response_time_ms = Column(Float, default=0.0)
+    robots_txt_status = Column(String(50), default="Allowed")
+    ssl_valid = Column(Boolean, default=True)
+    consecutive_failures = Column(Integer, default=0)
+    
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     credentials = relationship("SourceCredentials", back_populates="source", uselist=False, cascade="all, delete-orphan")
@@ -67,3 +82,17 @@ class CrawlHistory(Base):
     screenshot_path = Column(String(512), nullable=True)
 
     source = relationship("Source", back_populates="crawls")
+
+class ScheduledJobLog(Base):
+    __tablename__ = "scheduled_job_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    workspace_id = Column(String(50), default="default_ws", index=True)
+    job_name = Column(String(255), nullable=False, index=True)
+    status = Column(String(50), default="Pending")  # Running, Success, Failed
+    last_run = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    next_run = Column(DateTime, nullable=True)
+    duration_seconds = Column(Float, default=0.0)
+    result_summary = Column(Text, nullable=True)
+    error_log = Column(Text, nullable=True)
+

@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Integer, Float, DateTime, Text, ForeignKey, JSON
+from sqlalchemy import Column, String, Integer, Float, DateTime, Text, ForeignKey, JSON, Boolean
 from sqlalchemy.orm import relationship
 from backend.app.database.session import Base
 
@@ -38,7 +38,12 @@ class Tender(Base):
     submission_deadline = Column(DateTime, nullable=True, index=True)
     
     status = Column(String(50), default="Active", index=True)  # Active, Expired, Awarded, Cancelled
+    lifecycle_stage = Column(String(50), default="Discovered", index=True)  # Discovered, Indexed, AI Processed, Notified, Updated, Closed, Archived
     access_status = Column(String(50), default="Verified")     # Verified, Behind Login / Unverified
+    verification_status = Column(String(50), default="VERIFIED", index=True)  # VERIFIED, FAILED, PENDING, REJECTED
+    integrity_score = Column(Float, default=100.0)  # Data Quality / Integrity Score (0-100%)
+    url_status_code = Column(Integer, default=200)
+    verified_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     official_link = Column(String(512), nullable=True)
     
     # Parsed & AI generated fields
@@ -98,6 +103,11 @@ class TenderAttachment(Base):
     file_type = Column(String(50), default="PDF")  # PDF, BOQ, Corrigendum, Annexure
     file_path = Column(String(512), nullable=False)
     file_size_bytes = Column(Integer, default=0)
+    version_number = Column(Integer, default=1)
+    processing_status = Column(String(50), default="Pending")  # Pending, Processing, OCR_Completed, Indexed, Failed
+    ocr_applied = Column(Boolean, default=False)
+    virus_scanned = Column(Boolean, default=True)
+    hash_sha256 = Column(String(64), nullable=True)
     parsed_content = Column(Text, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
