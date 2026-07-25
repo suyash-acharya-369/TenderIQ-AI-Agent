@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: Optional[str] = os.getenv("OPENROUTER_API_KEY", "")
     
     # Notifications
+    EMAIL_PROVIDER: str = os.getenv("EMAIL_PROVIDER", "smtp")
+    RESEND_API_KEY: Optional[str] = os.getenv("RESEND_API_KEY", "")
     SMTP_HOST: Optional[str] = os.getenv("SMTP_HOST", "")
     SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
     SMTP_USER: Optional[str] = os.getenv("SMTP_USER", "")

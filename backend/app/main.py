@@ -21,6 +21,8 @@ from backend.app.api.users import router as users_router
 from backend.app.api.organizations import router as organizations_router
 from backend.app.api.admin import router as admin_router
 from backend.app.api.notifications import router as notifications_router
+from backend.app.api.email_delivery import router as email_router
+from backend.app.api.scheduler import router as scheduler_router
 from backend.app.services.scheduler import scheduler
 
 app = FastAPI(
@@ -69,6 +71,8 @@ app.include_router(users_router, prefix=settings.API_V1_STR)
 app.include_router(organizations_router, prefix=settings.API_V1_STR)
 app.include_router(admin_router, prefix=settings.API_V1_STR)
 app.include_router(notifications_router, prefix=settings.API_V1_STR)
+app.include_router(email_router, prefix=settings.API_V1_STR)
+app.include_router(scheduler_router, prefix=settings.API_V1_STR)
 
 # Mount Static Client Scripts & Assets
 static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../static"))

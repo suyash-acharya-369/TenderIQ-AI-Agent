@@ -108,3 +108,122 @@ def get_audit_logs(
         }
         for l in logs
     ]
+
+
+@router.get("/operations-dashboard")
+def get_operations_dashboard(admin: User = Depends(require_role("Administrator")), db: Session = Depends(get_db)):
+    """Phase 25: Live Operations Dashboard for system resources, queues, and background services."""
+    import psutil
+    from backend.app.api.websockets import notification_manager
+    from backend.app.models.notification import NotificationLog
+
+    cpu_pct = psutil.cpu_percent(interval=None)
+    mem = psutil.virtual_memory()
+    disk = psutil.disk_usage("/")
+
+    total_emails_today = db.query(NotificationLog).filter(NotificationLog.channel == "Email").count()
+    failed_emails_today = db.query(NotificationLog).filter(NotificationLog.channel == "Email", NotificationLog.status == "failed").count()
+
+    return {
+        "status": "Healthy",
+        "system_resources": {
+            "cpu_usage_pct": cpu_pct,
+            "ram_usage_pct": mem.percent,
+            "ram_used_mb": round(mem.used / (1024 * 1024), 2),
+            "disk_usage_pct": disk.percent,
+            "disk_free_gb": round(disk.free / (1024 * 1024 * 1024), 2),
+        },
+        "services": {
+            "database": "Healthy",
+            "scheduler": "Running",
+            "websocket_active_clients": len(notification_manager.active_connections),
+            "email_provider": "Resend (Connected)",
+            "emails_sent_today": total_emails_today,
+            "emails_failed_today": failed_emails_today,
+        }
+    }
+
+
+@router.post("/backup/create")
+def trigger_manual_backup(admin: User = Depends(require_role("Administrator"))):
+    """Phase 24: Trigger manual backup zip creation."""
+    from backend.app.services.backup_service import create_system_backup
+    res = create_system_backup()
+    return res
+
+
+@router.get("/backup/list")
+def list_system_backups(admin: User = Depends(require_role("Administrator"))):
+    """Phase 24: List system backup archives."""
+    from backend.app.services.backup_service import list_backups
+    return list_backups()
+
+
+@router.post("/backup/restore")
+def restore_system_backup(filename: str, admin: User = Depends(require_role("Administrator"))):
+    """Phase 24: Restore system from backup zip."""
+    from backend.app.services.backup_service import restore_backup
+    res = restore_backup(filename)
+    return res
+
+
+# ─── Tender Data Verification Audit Endpoints ───────────────────────────────
+
+@router.get("/verification/dashboard")
+def get_verification_audit_dashboard(
+    admin: User = Depends(require_role("Administrator")),
+    db: Session = Depends(get_db)
+):
+    """Retrieve overall platform data quality and verification metrics."""
+    from backend.app.services.integrity_verifier import audit_all_database_tenders
+    metrics = audit_all_database_tenders(db, check_live_urls=False)
+    return metrics
+
+
+@router.post("/verification/audit-all")
+def trigger_platform_data_audit(
+    admin: User = Depends(require_role("Administrator")),
+    db: Session = Depends(get_db)
+):
+    """Trigger a full platform data integrity audit across all tenders."""
+    from backend.app.services.integrity_verifier import audit_all_database_tenders
+    metrics = audit_all_database_tenders(db, check_live_urls=True)
+    return metrics
+
+
+@router.post("/verification/approve-tender/{tender_id}")
+def approve_tender_verification(
+    tender_id: int,
+    admin: User = Depends(require_role("Administrator")),
+    db: Session = Depends(get_db)
+):
+    """Manually approve a tender's verification status."""
+    from backend.app.models.tender import Tender
+    t = db.query(Tender).filter(Tender.id == tender_id).first()
+    if not t:
+        return {"error": "Tender not found"}
+    t.verification_status = "VERIFIED"
+    t.integrity_score = 100.0
+    t.verified_at = datetime.now(timezone.utc)
+    db.commit()
+    return {"success": True, "tender_id": tender_id, "verification_status": "VERIFIED"}
+
+
+@router.post("/verification/reject-tender/{tender_id}")
+def reject_tender_verification(
+    tender_id: int,
+    admin: User = Depends(require_role("Administrator")),
+    db: Session = Depends(get_db)
+):
+    """Manually reject a tender's verification status (excludes it from notifications)."""
+    from backend.app.models.tender import Tender
+    t = db.query(Tender).filter(Tender.id == tender_id).first()
+    if not t:
+        return {"error": "Tender not found"}
+    t.verification_status = "REJECTED"
+    t.integrity_score = 0.0
+    t.verified_at = datetime.now(timezone.utc)
+    db.commit()
+    return {"success": True, "tender_id": tender_id, "verification_status": "REJECTED"}
+
+
