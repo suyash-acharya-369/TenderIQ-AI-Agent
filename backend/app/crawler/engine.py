@@ -193,9 +193,9 @@ def run_source_crawl(source_id: int, db: Session) -> Dict[str, Any]:
                         keywords=[]
                     ))
 
-        # Update CrawlHistory & Source last_crawl
+        # Update CrawlHistory & Source last_crawl & Health (Phase 14 & 15)
         finish_time = datetime.now(timezone.utc)
-        duration = int((finish_time - start_time).total_seconds())
+        duration = float((finish_time - start_time).total_seconds())
 
         history.finish_time = finish_time
         history.duration_seconds = duration
@@ -205,6 +205,10 @@ def run_source_crawl(source_id: int, db: Session) -> Dict[str, Any]:
         history.status = "completed"
 
         source.last_crawl = finish_time
+        source.last_successful_crawl = finish_time
+        source.consecutive_failures = 0
+        source.health_status = "Healthy"
+        source.avg_response_time_ms = round(duration * 1000 / (len(opportunities) or 1), 2)
         source.next_crawl = finish_time + timedelta(hours=24)
         db.commit()
 
@@ -223,9 +227,18 @@ def run_source_crawl(source_id: int, db: Session) -> Dict[str, Any]:
 
     except Exception as e:
         logger.error(f"Crawl execution failed for {source.name}: {e}")
-        history.finish_time = datetime.now(timezone.utc)
+        finish_time = datetime.now(timezone.utc)
+        history.finish_time = finish_time
         history.status = "failed"
         history.error_message = str(e)
+        
+        # Phase 15: Increment consecutive failures & health degradation
+        source.consecutive_failures = (source.consecutive_failures or 0) + 1
+        if source.consecutive_failures >= 3:
+            source.health_status = "Error"
+        else:
+            source.health_status = "Warning"
+        
         db.commit()
         
         event_bus.dispatch(CrawlFailedEvent(
