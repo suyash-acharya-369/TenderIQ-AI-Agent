@@ -8,6 +8,11 @@
 *.sqlite
 *.sqlite3
 
+# Backups & Archives
+storage/backups/
+*.zip
+*.tar.gz
+
 # Python / Pytest / Caches
 __pycache__/
 *.py[cod]
