@@ -39,12 +39,23 @@ class Tender(Base):
     
     status = Column(String(50), default="Active", index=True)  # Active, Expired, Awarded, Cancelled
     lifecycle_stage = Column(String(50), default="Discovered", index=True)  # Discovered, Indexed, AI Processed, Notified, Updated, Closed, Archived
+    moderation_status = Column(String(50), default="VERIFIED", index=True) # NEW, CRAWLED, AI PROCESSED, VERIFIED, PUBLISHED, EMAILED, ARCHIVED
     access_status = Column(String(50), default="Verified")     # Verified, Behind Login / Unverified
     verification_status = Column(String(50), default="VERIFIED", index=True)  # VERIFIED, FAILED, PENDING, REJECTED
     integrity_score = Column(Float, default=100.0)  # Data Quality / Integrity Score (0-100%)
     url_status_code = Column(Integer, default=200)
     verified_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     official_link = Column(String(512), nullable=True)
+    source_urls_json = Column(JSON, nullable=True)  # All merged portal URLs
+    
+    # Optional Procurement Metadata (Phase 2)
+    state_region = Column(String(100), nullable=True)
+    buyer_contact = Column(String(255), nullable=True)
+    procurement_method = Column(String(100), nullable=True)
+    cpv_code = Column(String(50), nullable=True)
+    industry_classification = Column(String(100), nullable=True)
+    funding_agency = Column(String(150), nullable=True)
+    contract_duration = Column(String(100), nullable=True)
     
     # Parsed & AI generated fields
     scope_of_work = Column(Text, nullable=True)
@@ -54,6 +65,8 @@ class Tender(Base):
     financial_requirements = Column(Text, nullable=True)
     required_documents = Column(Text, nullable=True)
     ai_summary = Column(Text, nullable=True)
+    ai_citations = Column(JSON, nullable=True)     # Citation mapping e.g. {"Deadline": "Page 14, Section 5.2"}
+    keyword_evidence = Column(JSON, nullable=True) # Keyword evidence snippets e.g. [{"kw": "LMS", "page": 3, "sec": "2.1", "sentence": "..."}]
     risk_analysis = Column(Text, nullable=True)
     bid_recommendation = Column(String(50), default="Bid")     # Bid, No Bid, Review
     winning_probability = Column(Float, default=75.0)

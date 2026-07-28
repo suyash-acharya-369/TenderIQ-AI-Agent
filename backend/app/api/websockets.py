@@ -41,4 +41,25 @@ class NotificationManager:
                 except Exception:
                     pass
 
+    async def broadcast_crawl_progress(self, source_id: int, stage: str, detail: str = ""):
+        """Block 6: Live crawl monitor — broadcast real-time crawl progress to all connected clients."""
+        payload = {
+            "type": "CRAWL_PROGRESS",
+            "source_id": source_id,
+            "stage": stage,
+            "detail": detail
+        }
+        message = json.dumps(payload)
+        
+        # Broadcast to all authenticated + unauthenticated connections
+        all_conns = list(self.unauthenticated_connections)
+        for user_conns in self.active_connections.values():
+            all_conns.extend(user_conns)
+        
+        for connection in all_conns:
+            try:
+                await connection.send_text(message)
+            except Exception:
+                pass
+
 notification_manager = NotificationManager()

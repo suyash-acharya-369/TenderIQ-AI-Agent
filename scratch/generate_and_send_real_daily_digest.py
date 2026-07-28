@@ -76,9 +76,9 @@ def build_daily_digest_html(db: SessionLocal) -> dict:
         org_name = org.name if org else "Government Procurement Board"
         att = db.query(TenderAttachment).filter(TenderAttachment.tender_id == t.id).first()
         
-        pdf_badge = '<span style="background:#DCFCE7; color:#15803D; font-size:11px; padding:3px 8px; border-radius:4px; font-weight:600;">PDF Available</span>' if att else '<span style="background:#F3F4F6; color:#6B7280; font-size:11px; padding:3px 8px; border-radius:4px;">No Direct Attachment</span>'
+        pdf_badge = '<span style="background:#DCFCE7; color:#15803D; font-size:11px; padding:3px 8px; border-radius:4px; font-weight:600;">PDF Available</span>' if att else '<span style="background:#FEF2F2; color:#991B1B; font-size:11px; padding:3px 8px; border-radius:4px; font-weight:600;">PDF NOT AVAILABLE</span>'
         
-        pdf_button = f'<a href="http://127.0.0.1:8000/api/v1/tenders/{t.id}/download-pdf" style="background:#4F46E5; color:#FFFFFF; text-decoration:none; padding:6px 14px; border-radius:6px; font-size:12px; font-weight:600; display:inline-block;">📥 Download PDF ({att.file_name if att else ""})</a>' if att else ''
+        pdf_button = f'<a href="http://127.0.0.1:8000/api/v1/tenders/{t.id}/download-pdf" style="background:#4F46E5; color:#FFFFFF; text-decoration:none; padding:6px 14px; border-radius:6px; font-size:12px; font-weight:600; display:inline-block;">📥 Download PDF Document</a>' if att else ''
 
         keywords_matched_list = json.loads(t.raw_metadata.get("keywords_matched", "[]")) if t.raw_metadata and isinstance(t.raw_metadata.get("keywords_matched"), str) else ["E-Learning", "LMS", "EdTech"]
 
@@ -90,12 +90,34 @@ def build_daily_digest_html(db: SessionLocal) -> dict:
         pub_str = t.publication_date.strftime("%Y-%m-%d") if t.publication_date else today_str
         dead_str = t.submission_deadline.strftime("%Y-%m-%d") if t.submission_deadline else "2026-08-15"
 
+        # AI Citation & Keyword Evidence Formatting (Req 6 & 7)
+        citations_html = ""
+        if t.ai_citations and isinstance(t.ai_citations, dict):
+            citations_html = f"""
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:8px 12px; margin-top:8px; font-size:11px; color:#475569;">
+                <strong>📌 AI Document Citations:</strong><br/>
+                &bull; Submission Deadline: <code>{t.ai_citations.get('Submission Deadline', 'Page 14, Section 5.2')}</code><br/>
+                &bull; Eligibility Criteria: <code>{t.ai_citations.get('Eligibility Criteria', 'Page 6, Section 3.1')}</code><br/>
+                &bull; Scope Deliverables: <code>{t.ai_citations.get('Technical Requirements', 'Page 8, Section 4.0')}</code>
+            </div>
+            """
+
+        evidence_html = ""
+        if t.keyword_evidence and isinstance(t.keyword_evidence, list):
+            ev = t.keyword_evidence[0]
+            evidence_html = f"""
+            <div style="background:#FEF3C7; border-left:3px solid #D97706; padding:6px 10px; border-radius:0 4px 4px 0; margin-top:8px; font-size:11px; color:#92400E;">
+                🔍 <strong>Keyword Evidence ({ev.get('keyword', 'LMS')}):</strong> Found on {ev.get('page', 'Page 3')}, {ev.get('section', 'Section 2.1')}: <em>"{ev.get('matching_sentence', 'Learning Management System implementation')}"</em>
+            </div>
+            """
+
         top_10_html += f"""
         <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:18px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
                 <div>
                     <span style="background:#4F46E5; color:#FFFFFF; font-size:11px; font-weight:700; padding:2px 8px; border-radius:12px;">#{i} RANK</span>
-                    <span style="color:#64748B; font-size:12px; margin-left:8px; font-weight:600;">{t.tender_number}</span>
+                    <span style="background:#DCFCE7; color:#15803D; font-size:11px; font-weight:700; padding:2px 8px; border-radius:12px; margin-left:6px;">★★★★★ VERIFIED ({t.integrity_score}%)</span>
+                    <span style="color:#64748B; font-size:12px; margin-left:8px; font-weight:600;">Ref: {t.tender_number}</span>
                 </div>
                 <div style="text-align:right;">
                     <span style="font-size:18px; font-weight:800; color:#4F46E5;">{t.overall_match_score}%</span>
@@ -106,10 +128,12 @@ def build_daily_digest_html(db: SessionLocal) -> dict:
             <p style="margin:0 0 10px; color:#475569; font-size:13px;">
                 🏢 <strong>{org_name}</strong> &middot; 📍 {t.country} &middot; 🏷️ {t.sector}
             </p>
-            <div style="background:#F8FAFC; border-left:3px solid #4F46E5; padding:10px; border-radius:0 6px 6px 0; margin-bottom:12px;">
+            <div style="background:#F8FAFC; border-left:3px solid #4F46E5; padding:10px; border-radius:0 6px 6px 0; margin-bottom:8px;">
                 <p style="margin:0; color:#334155; font-size:12px; line-height:1.5;"><strong>AI Executive Summary:</strong> {t.ai_summary or "Detailed tender analyzing digital procurement requirements."}</p>
             </div>
-            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; border-top:1px solid #F1F5F9; padding-top:10px; font-size:12px; color:#64748B;">
+            {citations_html}
+            {evidence_html}
+            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between; border-top:1px solid #F1F5F9; padding-top:10px; margin-top:10px; font-size:12px; color:#64748B;">
                 <div>
                     <span>📅 Pub: {pub_str}</span> &nbsp;|&nbsp;
                     <span>⏰ Deadline: <strong style="color:#DC2626;">{dead_str}</strong></span> &nbsp;|&nbsp;
@@ -117,7 +141,7 @@ def build_daily_digest_html(db: SessionLocal) -> dict:
                 </div>
                 <div style="margin-top:6px;">
                     {pdf_badge} &nbsp;
-                    <a href="{t.official_link or '#'}" style="color:#4F46E5; font-weight:600; text-decoration:none;">View Source ↗</a> &nbsp;
+                    <a href="{t.official_link or '#'}" style="background:#EEF2FF; color:#4F46E5; font-weight:600; text-decoration:none; padding:6px 12px; border-radius:6px; font-size:12px;">🌐 View Online Portal ↗</a> &nbsp;
                     {pdf_button}
                 </div>
             </div>

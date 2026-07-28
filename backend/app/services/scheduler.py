@@ -184,19 +184,31 @@ class BackgroundScheduler:
         sources = db.query(Source).all()
         failing = 0
         for src in sources:
-            if src.consecutive_failures >= 3:
+            failures = src.consecutive_failures or 0
+            if failures >= 3:
                 src.health_status = "Error"
                 failing += 1
-            elif src.consecutive_failures > 0:
+            elif failures > 0:
                 src.health_status = "Warning"
             else:
                 src.health_status = "Healthy"
+                
+            # Block 3: Calculate 5-Star Source Trust Score
+            deductions = 0.0
+            if failures > 0:
+                deductions += min(2.0, failures * 0.5)
+            if (src.avg_response_time_ms or 0) > 5000:
+                deductions += 0.5
+            if src.broken_pages_count and src.broken_pages_count > 0:
+                deductions += min(1.5, src.broken_pages_count * 0.1)
+                
+            src.trust_score = max(1.0, 5.0 - deductions)
         db.commit()
         return f"Health check completed across {len(sources)} sources. {failing} in Error state."
 
     def _job_retry_failed_crawls(self, db) -> str:
         """Retry sources in Warning or failing state."""
-        failed = db.query(Source).filter(Source.consecutive_failures > 0, Source.is_enabled == True).all()
+        failed = db.query(Source).filter(Source.consecutive_failures.isnot(None), Source.consecutive_failures > 0, Source.is_enabled == True).all()
         count = 0
         for src in failed:
             run_source_crawl(src.id, db)

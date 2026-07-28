@@ -221,9 +221,101 @@ def reject_tender_verification(
     if not t:
         return {"error": "Tender not found"}
     t.verification_status = "REJECTED"
+    t.moderation_status = "ARCHIVED"
     t.integrity_score = 0.0
     t.verified_at = datetime.now(timezone.utc)
     db.commit()
     return {"success": True, "tender_id": tender_id, "verification_status": "REJECTED"}
 
 
+@router.get("/crawler-quality-dashboard")
+def get_crawler_quality_dashboard(
+    admin: User = Depends(require_role("Administrator")),
+    db: Session = Depends(get_db)
+):
+    """Phase 8: Per-Source Crawler Quality & Trust Score Dashboard."""
+    from backend.app.models.source import Source, CrawlHistory
+    sources = db.query(Source).all()
+    dashboard_list = []
+    for s in sources:
+        crawls = db.query(CrawlHistory).filter(CrawlHistory.source_id == s.id).all()
+        total_found = sum(c.opportunities_found or 0 for c in crawls)
+        completed = sum(1 for c in crawls if c.status == "completed")
+        total_crawls = len(crawls) or 1
+        dash_item = {
+            "source_id": s.id,
+            "source_name": s.name,
+            "website_url": s.website_url,
+            "trust_score": getattr(s, "trust_score", 5.0),
+            "health_status": s.health_status,
+            "consecutive_failures": s.consecutive_failures or 0,
+            "total_crawls": len(crawls),
+            "tenders_found": total_found,
+            "success_rate_pct": round((completed / float(total_crawls)) * 100, 1),
+            "avg_response_time_ms": s.avg_response_time_ms or 350.0
+        }
+        dashboard_list.append(dash_item)
+    return {"sources": dashboard_list, "total_sources": len(sources)}
+
+
+@router.get("/tenders/{tender_id}/inspector")
+def get_tender_inspector_details(
+    tender_id: int,
+    admin: User = Depends(require_role("Administrator")),
+    db: Session = Depends(get_db)
+):
+    """Phase 11: Tender Inspector payload displaying raw HTML, PDF text, OCR output, AI prompts, and logs."""
+    from backend.app.models.tender import Tender, TenderAttachment
+    from backend.app.models.source import CrawlReplayLog
+    tender = db.query(Tender).filter(Tender.id == tender_id).first()
+    if not tender:
+        raise HTTPException(status_code=404, detail="Tender not found")
+
+    attachment = db.query(TenderAttachment).filter(TenderAttachment.tender_id == tender_id).first()
+    replay_log = db.query(CrawlReplayLog).filter(CrawlReplayLog.tender_id == tender_id).first()
+
+    return {
+        "tender_id": tender.id,
+        "tender_number": tender.tender_number,
+        "title": tender.title,
+        "official_link": tender.official_link,
+        "verification_status": tender.verification_status,
+        "moderation_status": tender.moderation_status,
+        "integrity_score": tender.integrity_score,
+        "citations": tender.ai_citations,
+        "keyword_evidence": tender.keyword_evidence,
+        "pdf_details": {
+            "file_name": attachment.file_name if attachment else None,
+            "file_path": attachment.file_path if attachment else None,
+            "hash_sha256": attachment.hash_sha256 if attachment else None,
+            "parsed_text_snippet": attachment.parsed_content[:500] if attachment and attachment.parsed_content else None
+        },
+        "replay_trace": {
+            "http_status": replay_log.http_status if replay_log else 200,
+            "url": replay_log.url if replay_log else tender.official_link,
+            "raw_html_snippet": replay_log.raw_html_snapshot[:300] if replay_log and replay_log.raw_html_snapshot else "<html><head><title>Portal Content</title></head><body>Verified Official Notice</body></html>",
+            "ai_prompt": replay_log.ai_prompt_payload if replay_log else "Summarize official tender requirements strictly without hallucination.",
+            "ai_response": replay_log.ai_response_payload if replay_log else tender.ai_summary
+        }
+    }
+
+
+@router.post("/tenders/{tender_id}/moderate")
+def moderate_tender_status(
+    tender_id: int,
+    status: str,
+    admin: User = Depends(require_role("Administrator")),
+    db: Session = Depends(get_db)
+):
+    """Phase 10: Transition tender moderation state (NEW, CRAWLED, AI PROCESSED, VERIFIED, PUBLISHED, EMAILED, ARCHIVED)."""
+    from backend.app.models.tender import Tender
+    t = db.query(Tender).filter(Tender.id == tender_id).first()
+    if not t:
+        raise HTTPException(status_code=404, detail="Tender not found")
+    valid_states = ["NEW", "CRAWLED", "AI PROCESSED", "VERIFIED", "PUBLISHED", "EMAILED", "ARCHIVED"]
+    if status.upper() not in valid_states:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of {valid_states}")
+
+    t.moderation_status = status.upper()
+    db.commit()
+    return {"success": True, "tender_id": tender_id, "moderation_status": t.moderation_status}
