@@ -6,8 +6,16 @@ from backend.app.connectors.base import BaseConnector
 logger = logging.getLogger("TenderIQ.Connector.API")
 
 class APIConnector(BaseConnector):
+    HEADERS = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
     def login(self, username: str, password: str) -> bool:
         return True
+
+    def discover(self, source_url: str) -> List[str]:
+        """API endpoints are self-contained."""
+        return [source_url]
 
     def crawl(
         self,
@@ -20,7 +28,7 @@ class APIConnector(BaseConnector):
         results: List[Dict[str, Any]] = []
 
         try:
-            with httpx.Client(timeout=15.0, follow_redirects=True) as client:
+            with httpx.Client(timeout=15.0, follow_redirects=True, headers=self.HEADERS) as client:
                 res = client.get(source_url)
                 if res.status_code < 400:
                     data = res.json()
@@ -44,23 +52,41 @@ class APIConnector(BaseConnector):
         except Exception as e:
             logger.warning(f"REST API JSON parse warning for {source_url}: {e}")
 
-        # Fallback if API response is non-JSON or unreachable
+        # No synthetic fallback — only return actually parsed API data
         if not results:
-            results.append({
-                "tender_number": "WB-API-2026-901",
-                "title": f"World Bank Global Digital Education & LMS Platform Procurement — {source_url.split('//')[-1].split('/')[0]}",
-                "scope_of_work": f"API-integrated tender notice for global digital learning platform and virtual lab deployment.",
-                "official_link": source_url,
-                "budget": 4500000.0,
-                "currency": "USD",
-                "country": "International"
-            })
+            logger.info(f"No tender data extracted from API at {source_url}. Returning empty list.")
 
         return results
 
+    def extract_metadata(self, html_or_json_content: str, source_url: str) -> Dict[str, Any]:
+        """Extract metadata from API JSON response."""
+        import json
+        metadata = {"source_url": source_url}
+        try:
+            data = json.loads(html_or_json_content)
+            if isinstance(data, dict):
+                metadata["title"] = data.get("title", "")
+                metadata["organization"] = data.get("organization", "")
+        except Exception as e:
+            logger.warning(f"API metadata extraction error: {e}")
+        return metadata
+
+    def download_documents(self, tender_url: str, save_dir: str) -> List[Dict[str, Any]]:
+        """API connectors typically don't provide direct document downloads."""
+        return []
+
+    def verify(self, tender_url: str) -> Dict[str, Any]:
+        """Verify API endpoint reachability."""
+        try:
+            with httpx.Client(timeout=6.0, follow_redirects=True, headers=self.HEADERS) as client:
+                res = client.get(tender_url)
+                return {"status_code": res.status_code, "is_valid": res.status_code < 400}
+        except Exception as e:
+            return {"status_code": 502, "is_valid": False, "error": str(e)}
+
     def healthcheck(self, source_url: str) -> bool:
         try:
-            with httpx.Client(timeout=5.0) as client:
+            with httpx.Client(timeout=5.0, headers=self.HEADERS) as client:
                 res = client.get(source_url)
                 return res.status_code < 500
         except Exception:

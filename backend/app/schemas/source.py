@@ -37,6 +37,9 @@ class SourceResponse(SourceBase):
     health_status: str
     last_crawl: Optional[datetime] = None
     next_crawl: Optional[datetime] = None
+    trust_score: Optional[float] = None
+    avg_response_time_ms: Optional[float] = None
+    consecutive_failures: Optional[int] = None
 
     class Config:
         from_attributes = True

@@ -8,8 +8,16 @@ from backend.app.connectors.base import BaseConnector
 logger = logging.getLogger("TenderIQ.Connector.RSS")
 
 class RSSConnector(BaseConnector):
+    HEADERS = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
     def login(self, username: str, password: str) -> bool:
         return True
+
+    def discover(self, source_url: str) -> List[str]:
+        """RSS feeds are self-contained; the source_url is the feed itself."""
+        return [source_url]
 
     def crawl(
         self,
@@ -22,7 +30,7 @@ class RSSConnector(BaseConnector):
         results: List[Dict[str, Any]] = []
 
         try:
-            with httpx.Client(timeout=15.0, follow_redirects=True) as client:
+            with httpx.Client(timeout=15.0, follow_redirects=True, headers=self.HEADERS) as client:
                 res = client.get(source_url)
                 if res.status_code < 400:
                     root = ET.fromstring(res.text)
@@ -47,23 +55,40 @@ class RSSConnector(BaseConnector):
         except Exception as e:
             logger.warning(f"RSS XML parse warning for {source_url}: {e}")
 
-        # Fallback if RSS parsing yields no XML items
+        # No synthetic fallback — only return actually parsed RSS items
         if not results:
-            results.append({
-                "tender_number": f"RSS-FEED-2026-01",
-                "title": f"Procurement of E-Learning Platform & Digital Content — RSS Feed {source_url.split('//')[-1].split('/')[0]}",
-                "scope_of_work": f"Automated procurement notice retrieved via RSS feed connector from {source_url}.",
-                "official_link": source_url,
-                "budget": 3500000.0,
-                "currency": "USD",
-                "country": "International"
-            })
+            logger.info(f"No RSS tender items found from {source_url}. Returning empty list.")
 
         return results
 
+    def extract_metadata(self, html_or_json_content: str, source_url: str) -> Dict[str, Any]:
+        """Extract metadata from RSS XML content."""
+        metadata = {"source_url": source_url}
+        try:
+            root = ET.fromstring(html_or_json_content)
+            channel_title = root.findtext(".//title") or root.findtext(".//{http://www.w3.org/2005/Atom}title")
+            if channel_title:
+                metadata["title"] = channel_title.strip()
+        except Exception as e:
+            logger.warning(f"RSS metadata extraction error: {e}")
+        return metadata
+
+    def download_documents(self, tender_url: str, save_dir: str) -> List[Dict[str, Any]]:
+        """RSS feeds typically don't have direct document downloads."""
+        return []
+
+    def verify(self, tender_url: str) -> Dict[str, Any]:
+        """Verify RSS feed URL is reachable."""
+        try:
+            with httpx.Client(timeout=6.0, follow_redirects=True, headers=self.HEADERS) as client:
+                res = client.get(tender_url)
+                return {"status_code": res.status_code, "is_valid": res.status_code < 400}
+        except Exception as e:
+            return {"status_code": 502, "is_valid": False, "error": str(e)}
+
     def healthcheck(self, source_url: str) -> bool:
         try:
-            with httpx.Client(timeout=5.0) as client:
+            with httpx.Client(timeout=5.0, headers=self.HEADERS) as client:
                 res = client.get(source_url)
                 return res.status_code < 500
         except Exception:

@@ -30,6 +30,18 @@ function renderSourceList(sources) {
         const statusColor = isHealthy ? '#059669' : '#eab308';
         const syncFreq = s.frequency || 'Daily';
         
+        const trustScore = s.trust_score || 5.0;
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= Math.floor(trustScore)) {
+                starsHtml += `<span class="text-yellow-400 text-sm leading-none">★</span>`;
+            } else if (i - trustScore <= 0.5) {
+                starsHtml += `<span class="text-yellow-400 opacity-50 text-sm leading-none">★</span>`;
+            } else {
+                starsHtml += `<span class="text-gray-300 text-sm leading-none">★</span>`;
+            }
+        }
+
         return `
             <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg flex flex-col shadow-[0px_4px_12px_rgba(15,23,42,0.03)] hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start mb-md">
@@ -48,6 +60,12 @@ function renderSourceList(sources) {
                     <div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs">
                         <span class="text-secondary">Connector</span>
                         <span class="font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] rounded">${s.connector_type}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-body-sm font-body-sm border-b border-surface-variant pb-xs pt-xs">
+                        <span class="text-secondary">Trust Rating</span>
+                        <div class="flex items-center" title="Trust Score: ${trustScore.toFixed(1)}/5.0">
+                            ${starsHtml}
+                        </div>
                     </div>
                     <div class="flex justify-between text-body-sm font-body-sm border-b border-surface-variant pb-xs pt-xs">
                         <span class="text-secondary">Sync Frequency</span>

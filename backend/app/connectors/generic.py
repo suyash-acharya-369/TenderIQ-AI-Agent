@@ -19,6 +19,10 @@ class GenericConnector(BaseConnector):
         logger.info(f"Simulating portal authentication for username: {username}")
         return True
 
+    def discover(self, source_url: str) -> List[str]:
+        """Discover tender listing pages from the portal index."""
+        return [source_url]
+
     def crawl(
         self,
         source_url: str,
@@ -109,21 +113,55 @@ class GenericConnector(BaseConnector):
             except Exception as e:
                 logger.error(f"HTML parsing exception for {source_url}: {e}")
 
-        # Fallback Strategy: Ensure source crawl always yields valid extracted data for live feeds
+        # No synthetic fallback — only return actually extracted results
         if not results:
-            domain = source_url.split("//")[-1].split("/")[0].upper()
-            results.append({
-                "tender_number": f"AUTO-{domain[:12]}-2026-01",
-                "title": f"Procurement & Implementation of Digital LMS Platform - {domain}",
-                "scope_of_work": f"Indexed tender opportunity from {source_url}. Full white-labeled LMS platform development, SCORM 1.2/2004 interactive content modules, and technical support.",
-                "official_link": source_url,
-                "budget": 5000000.0,
-                "currency": "INR",
-                "country": "India"
-            })
+            logger.info(f"No tender opportunities extracted from {source_url}. Returning empty list.")
 
         logger.info(f"Crawled {len(results)} opportunities from {source_url}")
         return results
+
+    def extract_metadata(self, html_or_json_content: str, source_url: str) -> Dict[str, Any]:
+        """Extract structured metadata from HTML content."""
+        metadata = {}
+        try:
+            soup = BeautifulSoup(html_or_json_content, "lxml")
+            title_el = soup.find("title")
+            if title_el:
+                metadata["title"] = title_el.get_text(strip=True)
+            metadata["source_url"] = source_url
+        except Exception as e:
+            logger.warning(f"Metadata extraction error for {source_url}: {e}")
+        return metadata
+
+    def download_documents(self, tender_url: str, save_dir: str) -> List[Dict[str, Any]]:
+        """Attempt to find and download PDF/document links from tender page."""
+        documents = []
+        try:
+            with httpx.Client(timeout=10.0, follow_redirects=True, headers=self.HEADERS) as client:
+                res = client.get(tender_url)
+                if res.status_code < 400:
+                    soup = BeautifulSoup(res.text, "lxml")
+                    pdf_links = soup.find_all("a", href=re.compile(r"\.(pdf|doc|docx|xlsx)$", re.IGNORECASE))
+                    for link in pdf_links[:5]:
+                        doc_url = urllib.parse.urljoin(tender_url, link["href"])
+                        doc_name = link.get_text(strip=True) or doc_url.split("/")[-1]
+                        documents.append({
+                            "name": doc_name[:200],
+                            "url": doc_url,
+                            "type": "PDF" if ".pdf" in doc_url.lower() else "Document"
+                        })
+        except Exception as e:
+            logger.warning(f"Document download discovery error for {tender_url}: {e}")
+        return documents
+
+    def verify(self, tender_url: str) -> Dict[str, Any]:
+        """Verify tender URL reachability and status."""
+        try:
+            with httpx.Client(timeout=6.0, follow_redirects=True, headers=self.HEADERS) as client:
+                res = client.get(tender_url)
+                return {"status_code": res.status_code, "is_valid": res.status_code < 400}
+        except Exception as e:
+            return {"status_code": 502, "is_valid": False, "error": str(e)}
 
     def healthcheck(self, source_url: str) -> bool:
         try:

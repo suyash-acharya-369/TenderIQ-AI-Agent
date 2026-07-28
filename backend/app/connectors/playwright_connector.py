@@ -1,16 +1,21 @@
 import logging
+import httpx
 from typing import Dict, Any, List, Optional
 from backend.app.connectors.base import BaseConnector
-from backend.app.connectors.generic import GenericConnector
 
 logger = logging.getLogger("TenderIQ.Connector.Playwright")
 
 class PlaywrightConnector(BaseConnector):
-    def __init__(self):
-        self.fallback = GenericConnector()
+    HEADERS = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
 
     def login(self, username: str, password: str) -> bool:
         return True
+
+    def discover(self, source_url: str) -> List[str]:
+        """Return the source URL as the listing page."""
+        return [source_url]
 
     def crawl(
         self,
@@ -58,7 +63,32 @@ class PlaywrightConnector(BaseConnector):
             logger.warning(f"Playwright browser automation notice for {source_url}: {e}. Falling back to HTTPX/BeautifulSoup.")
 
         # Fallback to Generic HTTPX / BeautifulSoup connector
-        return self.fallback.crawl(source_url, tender_selector, pdf_selector, pagination_selector)
+        from backend.app.connectors.generic import GenericConnector
+        fallback = GenericConnector()
+        return fallback.crawl(source_url, tender_selector, pdf_selector, pagination_selector)
+
+    def extract_metadata(self, html_or_json_content: str, source_url: str) -> Dict[str, Any]:
+        """Extract metadata from rendered page content."""
+        return {"source_url": source_url}
+
+    def download_documents(self, tender_url: str, save_dir: str) -> List[Dict[str, Any]]:
+        """Delegate document download to generic connector."""
+        from backend.app.connectors.generic import GenericConnector
+        return GenericConnector().download_documents(tender_url, save_dir)
+
+    def verify(self, tender_url: str) -> Dict[str, Any]:
+        """Verify URL reachability."""
+        try:
+            with httpx.Client(timeout=6.0, follow_redirects=True, headers=self.HEADERS) as client:
+                res = client.get(tender_url)
+                return {"status_code": res.status_code, "is_valid": res.status_code < 400}
+        except Exception as e:
+            return {"status_code": 502, "is_valid": False, "error": str(e)}
 
     def healthcheck(self, source_url: str) -> bool:
-        return self.fallback.healthcheck(source_url)
+        try:
+            with httpx.Client(timeout=5.0, headers=self.HEADERS) as client:
+                res = client.get(source_url)
+                return res.status_code < 500
+        except Exception:
+            return False

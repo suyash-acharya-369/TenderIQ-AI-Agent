@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, Text, ForeignKey, Float
+from sqlalchemy import Column, String, Integer, Boolean, DateTime, Text, ForeignKey, Float, JSON
 from sqlalchemy.orm import relationship
 from backend.app.database.session import Base
 
@@ -46,9 +46,35 @@ class Source(Base):
     consecutive_failures = Column(Integer, default=0)
     
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    # Phase 5 Source Trust Score (1.0 to 5.0 Rating)
+    trust_score = Column(Float, default=5.0)
+    broken_pages_count = Column(Integer, default=0)
 
     credentials = relationship("SourceCredentials", back_populates="source", uselist=False, cascade="all, delete-orphan")
     crawls = relationship("CrawlHistory", back_populates="source", cascade="all, delete-orphan")
+
+
+class CrawlReplayLog(Base):
+    __tablename__ = "crawl_replay_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    workspace_id = Column(String(50), default="default_ws", index=True)
+    source_id = Column(Integer, ForeignKey("sources.id", ondelete="CASCADE"), nullable=False)
+    tender_id = Column(Integer, nullable=True)
+    url = Column(String(512), nullable=False)
+    http_status = Column(Integer, default=200)
+    request_headers_json = Column(JSON, nullable=True)
+    response_headers_json = Column(JSON, nullable=True)
+    raw_html_snapshot = Column(Text, nullable=True)
+    extracted_json = Column(JSON, nullable=True)
+    documents_downloaded = Column(JSON, nullable=True)
+    ai_prompt_payload = Column(Text, nullable=True)
+    ai_response_payload = Column(Text, nullable=True)
+    logs_json = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
 
 class SourceCredentials(Base):
     __tablename__ = "source_credentials"
