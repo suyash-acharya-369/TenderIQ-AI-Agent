@@ -229,3 +229,7 @@ async def resend_webhook(request: Request, db: Session = Depends(get_db)):
                 log.clicked_at = datetime.now(timezone.utc)
             db.commit()
     return {"status": "processed"}
+
+@router.get("/logs")
+def get_notification_logs(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return db.query(NotificationLog).order_by(NotificationLog.sent_at.desc()).limit(100).all()

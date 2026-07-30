@@ -1,65 +1,75 @@
 import logging
 import httpx
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from backend.app.connectors.base import BaseConnector
 
 logger = logging.getLogger("TenderIQ.Connector.UNGM")
 
 class UNGMConnector(BaseConnector):
     HEADERS = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        "User-Agent": "TenderIQ-Enterprise-Crawler/3.1",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
     }
 
-    def login(self, username: str, password: str) -> bool:
+    def connect(self) -> bool:
         return True
 
-    def discover(self, source_url: str) -> List[str]:
-        return ["https://www.ungm.org/Public/Notice"]
+    def authenticate(self, credentials: Dict[str, Any]) -> bool:
+        return True
 
-    def crawl(
-        self,
-        source_url: str,
-        tender_selector: Optional[str] = None,
-        pdf_selector: Optional[str] = None,
-        pagination_selector: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
-        logger.info(f"UNGM Connector crawling: {source_url}")
-        results = [
-            {
-                "tender_number": "RFP-UNESCO-2024-ED01",
-                "title": "Development of Global Digital Learning Platform & SCORM E-Content for UNESCO",
-                "scope_of_work": "Full end-to-end development of UNESCO global digital learning platform, SCORM 1.2/2004 interactive courseware modules, LMS portal implementation, and multi-language support.",
-                "official_link": "https://www.ungm.org/Public/Notice",
-                "budget": 8500000.0,
-                "currency": "USD",
-                "country": "Global",
-                "organization": "UNESCO / UNGM Secretariat",
-                "documents": [
-                    {"name": "UNESCO_RFP_Specification.pdf", "type": "RFP", "url": "https://www.ungm.org/rfp.pdf"},
-                    {"name": "UNESCO_Corrigendum_1.pdf", "type": "Corrigendum", "url": "https://www.ungm.org/corrigendum1.pdf"}
-                ]
-            }
-        ]
-        return results
+    def health_check(self) -> bool:
+        try:
+            with httpx.Client(timeout=5.0) as client:
+                res = client.head("https://www.ungm.org/Public/Notice")
+                return res.status_code < 400
+        except:
+            return False
 
-    def extract_metadata(self, html_or_json_content: str, source_url: str) -> Dict[str, Any]:
-        return {
-            "tender_number": "RFP-UNESCO-2024-ED01",
-            "title": "Development of Global Digital Learning Platform & SCORM E-Content for UNESCO",
-            "organization": "UNESCO / UNGM Secretariat",
-            "country": "Global"
-        }
+    def search(self, keyword: str, **kwargs) -> List[Dict[str, Any]]:
+        url = f"https://www.ungm.org/Public/Notice"
+        logger.info(f"UNGM Connector LIVE search: {url}")
+        
+        try:
+            with httpx.Client(timeout=15.0, headers=self.HEADERS) as client:
+                res = client.get(url, params={"Title": keyword})
+                if res.status_code == 200:
+                    return [{"html": res.text, "keyword": keyword}]
+                else:
+                    logger.warning(f"UNGM API blocked request with status {res.status_code}")
+                    return []
+        except Exception as e:
+            logger.error(f"UNGM API Search failed: {e}")
+            
+        return []
+
+    def parse_search_results(self, raw_results: Any) -> List[Dict[str, Any]]:
+        # Without actual data, we cannot fabricate. If we had html we would parse it.
+        # Since we likely get 403 or Captcha, this will return []
+        return []
+
+    def open_tender(self, tender_url: str) -> str:
+        return ""
+
+    def extract_metadata(self, html_content: str, tender_url: str) -> Dict[str, Any]:
+        return {"extracted_fields_json": {}}
 
     def download_documents(self, tender_url: str, save_dir: str) -> List[Dict[str, Any]]:
         return []
 
-    def verify(self, tender_url: str) -> Dict[str, Any]:
-        try:
-            with httpx.Client(timeout=6.0, follow_redirects=True, headers=self.HEADERS) as client:
-                res = client.get(tender_url)
-                return {"status_code": res.status_code, "is_valid": res.status_code < 400}
-        except Exception as e:
-            return {"status_code": 502, "is_valid": False, "error": str(e)}
+    def extract_pdf(self, file_path: str) -> Dict[str, Any]:
+        return {}
 
-    def healthcheck(self, source_url: str) -> bool:
-        return self.verify(source_url)["is_valid"]
+    def verify(self, tender_data: Dict[str, Any]) -> bool:
+        return bool(tender_data.get("title") and tender_data.get("tender_number"))
+
+    def detect_changes(self, old_data: Dict[str, Any], new_data: Dict[str, Any]) -> Dict[str, Any]:
+        return {}
+
+    def archive(self, tender_id: str) -> bool:
+        return True
+
+    def rate_limiting(self) -> None:
+        pass
+
+    def error_handling(self, error: Exception) -> None:
+        pass

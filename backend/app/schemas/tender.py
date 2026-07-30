@@ -34,6 +34,7 @@ class OrganizationResponse(BaseModel):
 
 class TenderResponse(BaseModel):
     id: int
+    tender_uid: str
     tender_number: str
     title: str
     country: str
@@ -60,6 +61,17 @@ class TenderResponse(BaseModel):
     estimated_team: Optional[str] = None
     estimated_duration: Optional[str] = None
     
+    # Enterprise Hardening fields
+    extracted_fields_json: Optional[Any] = None
+    moderation_status: Optional[str] = None
+    verification_status: Optional[str] = None
+    ai_citations: Optional[Any] = None
+    keyword_evidence: Optional[Any] = None
+    source_urls_json: Optional[Any] = None
+    integrity_score: Optional[float] = None
+    lifecycle_stage: Optional[str] = None
+    verified_at: Optional[datetime] = None
+    
     keyword_score: float
     semantic_score: float
     ai_score: float
@@ -70,5 +82,27 @@ class TenderResponse(BaseModel):
     attachments: List[TenderAttachmentResponse] = []
     versions: List[TenderVersionResponse] = []
 
+    class Config:
+        from_attributes = True
+
+class TenderEvidenceResponse(BaseModel):
+    id: int
+    tender_id: int
+    html_snapshot_path: Optional[str] = None
+    crawler_logs_json: Optional[Any] = None
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class HumanReviewQueueResponse(BaseModel):
+    id: int
+    tender_uid: str
+    source_id: int
+    reason: str
+    context_json: Optional[Any] = None
+    status: str
+    created_at: datetime
+    
     class Config:
         from_attributes = True

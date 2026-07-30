@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from backend.app.config import settings
 from backend.app.ai.provider import BaseAIProvider
 
@@ -26,28 +26,33 @@ class OpenAIProvider(BaseAIProvider):
 
     def generate_summary(self, text: str, prompt_template: Optional[str] = None) -> Dict[str, Any]:
         if not self.client:
-            return self._heuristic_fallback_summary(text)
+            return self._heuristic_fallback_summary()
 
         try:
+            # V3.1 Zero Hallucination Guardrails
+            system_prompt = (
+                "You are an Enterprise Procurement AI. "
+                "CRITICAL RULE: NEVER fabricate or infer missing information. "
+                "If a field cannot be definitively verified from the provided text, you MUST output strictly: 'Not Available on Official Source'. "
+                "Do not guess. Do not estimate. Provide exact text citations."
+            )
             prompt = f"{prompt_template}\n\nTENDER TEXT CONTENT:\n{text[:12000]}"
             response = self.client.chat.completions.create(
                 model=self.default_model,
                 messages=[
-                    {"role": "system", "content": "You are a professional Tender Analysis AI. Return valid JSON only."},
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": prompt}
                 ],
                 response_format={"type": "json_object"} if not self.is_openrouter else None,
-                temperature=0.2
+                temperature=0.0
             )
             content = response.choices[0].message.content
-            # Clean possible markdown formatting from response
             if content.startswith("```json"):
                 content = content.replace("```json", "").replace("```", "").strip()
             return json.loads(content)
         except Exception as e:
             logger.error(f"AI completion error: {e}")
-            return self._heuristic_fallback_summary(text)
-
+            return self._heuristic_fallback_summary()
 
     def generate_embeddings(self, text: str) -> List[float]:
         if not self.client:
@@ -62,20 +67,21 @@ class OpenAIProvider(BaseAIProvider):
             logger.error(f"OpenAI embedding error: {e}")
             return [0.0] * 1536
 
-    def _heuristic_fallback_summary(self, text: str) -> Dict[str, Any]:
+    def _heuristic_fallback_summary(self) -> Dict[str, Any]:
+        """V3.1 Zero Hallucination: If AI fails, fallback returns safe empty values, never fake text."""
         return {
-            "scope_of_work": "Comprehensive development and deployment of digital learning platform and interactive SCORM content modules.",
-            "deliverables": "1. Learning Platform\n2. SCORM Content Modules\n3. Technical Support & Maintenance",
-            "eligibility_criteria": "5+ years experience in e-learning development, prior executed government/enterprise projects.",
-            "technical_requirements": "SCORM 1.2/2004, xAPI, Responsive HTML5, Cloud Hosting.",
-            "financial_requirements": "Minimum annual turnover requirement as per RFP guidelines.",
-            "required_documents": "Technical Proposal, Financial Proposal, Past Certificates, ISO Certifications.",
-            "ai_summary": "Extremely relevant opportunity matching organization e-learning capabilities. [Page 1, Section 1.1]",
-            "ai_citations": {"Deadline": "[Page 3, Section 1.2]", "Budget": "[Page 14, Section 5.2]"},
-            "keyword_evidence": [{"keyword": "LMS", "page": 3, "section": "2.1", "sentence": "Must provide a scalable LMS."}],
-            "risk_analysis": "Standard delivery risk. Timeline adherence required.",
-            "bid_recommendation": "Bid",
-            "winning_probability": 88.0,
-            "estimated_team": "1 ID Lead, 3 Storyline Developers, 2 Fullstack Engineers",
-            "estimated_duration": "6 Months"
+            "executive_summary": "Not Available on Official Source",
+            "scope_of_work": "Not Available on Official Source",
+            "deliverables": "Not Available on Official Source",
+            "eligibility_criteria": "Not Available on Official Source",
+            "technical_requirements": "Not Available on Official Source",
+            "financial_requirements": "Not Available on Official Source",
+            "required_documents": "Not Available on Official Source",
+            "ai_citations": {},
+            "keyword_evidence": [],
+            "risk_analysis": "Not Available on Official Source",
+            "bid_recommendation": "Review",
+            "winning_probability": 0.0,
+            "estimated_team": "Not Available on Official Source",
+            "estimated_duration": "Not Available on Official Source"
         }

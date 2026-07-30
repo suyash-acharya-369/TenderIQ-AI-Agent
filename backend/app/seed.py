@@ -4,7 +4,8 @@ from backend.app.database.session import SessionLocal, engine, Base
 from backend.app.models.user import User
 from backend.app.models.source import Source, CrawlHistory
 from backend.app.models.keyword import KeywordGroup
-from backend.app.models.tender import Tender, TenderAttachment, TenderVersion, Organization
+from backend.app.models.tender import Tender, TenderAttachment, TenderVersion, Organization, TenderEvidence, HumanReviewQueue
+from backend.app.models.source import Source, CrawlHistory, SearchAnalytics
 from backend.app.models.ai import PromptTemplate
 from backend.app.utils.security import hash_password
 
@@ -22,8 +23,7 @@ def seed_db():
                 hashed_password=hash_password("Admin123!"),
                 full_name="System Administrator",
                 role="Administrator",
-                is_active=True,
-                is_verified=True
+                is_active=True
             )
             db.add(admin)
             db.commit()
@@ -116,7 +116,7 @@ def seed_db():
         for portal in production_portals:
             existing = db.query(Source).filter(Source.name == portal["name"]).first()
             if existing:
-                existing.base_url = portal["base_url"]
+                existing.website_url = portal["base_url"]
                 existing.search_url = portal["search_url"]
                 existing.connector_type = portal["connector_type"]
                 existing.status = "active"
@@ -124,7 +124,7 @@ def seed_db():
             else:
                 src = Source(
                     name=portal["name"],
-                    base_url=portal["base_url"],
+                    website_url=portal["base_url"],
                     search_url=portal["search_url"],
                     connector_type=portal["connector_type"],
                     tender_selector=portal["tender_selector"],
@@ -280,193 +280,7 @@ def seed_db():
                 db.commit()
             org_db_map[o_name] = org
 
-        seeded_tenders = [
-            {
-                "number": "GEM/2026/B/892341",
-                "title": "Development of Next-Gen AI-Powered LMS & Interactive SCORM Content for National Skill Portal",
-                "source_name": "Government e-Marketplace (GeM)",
-                "org_name": "Ministry of Education, Govt of India",
-                "budget": 8500000.0,
-                "country": "India",
-                "scope": "Design, build, deploy, and maintain a high-concurrency Cloud LMS supporting 500k active students. Develop 200 hours of 4-Quadrant SCORM 1.2/2004 interactive modules in Articulate Storyline and Rise 360 with AI Tutor adaptive learning.",
-                "summary": "High-value strategic opportunity matching 95% of core e-learning, LMS development, and AI in Education capabilities.",
-                "recommendation": "Bid",
-                "win_prob": 94.0,
-                "score": 95.5
-            },
-            {
-                "number": "UNGM-RFP-2026-9921",
-                "title": "Global Digital Education & LMS Platform for UNESCO Capacity Building",
-                "source_name": "United Nations Global Marketplace (UNGM)",
-                "org_name": "UNESCO / UNGM Secretariat",
-                "budget": 1200000.0,
-                "country": "Global",
-                "scope": "Development of an internationalized multi-lingual Open edX / Moodle LMS platform with AI Learning Analytics and SCORM content packaging for 45 developing nations.",
-                "summary": "Global UN tender for LMS platform deployment and instructional design content development.",
-                "recommendation": "Bid",
-                "win_prob": 91.0,
-                "score": 93.0
-            },
-            {
-                "number": "WB-PROC-2026-041",
-                "title": "Digital Transformation & EdTech Capacity Building Project",
-                "source_name": "World Bank Project Procurement",
-                "org_name": "World Bank Group",
-                "budget": 2500000.0,
-                "country": "International",
-                "scope": "Procurement of digital classroom software, teacher training LMS, and 3D educational video animation modules for national curriculum reform.",
-                "summary": "Multi-year World Bank funded EdTech project covering digital learning, LMS platforms, and teacher training.",
-                "recommendation": "Bid",
-                "win_prob": 88.0,
-                "score": 91.5
-            },
-            {
-                "number": "CPPP/2026/ED/4412",
-                "title": "Development of Smart Classroom E-Content & Digital Learning Portal for State Schools",
-                "source_name": "Central Public Procurement Portal (CPPP)",
-                "org_name": "Ministry of Education, Govt of India",
-                "budget": 4500000.0,
-                "country": "India",
-                "scope": "Creation of 2D/3D animated e-content for Grades 6-12 aligned with NEP 2020. Deployment of cloud-hosted Student Portal and Assessment Engine.",
-                "summary": "State-level NEP 2020 digital content and smart classroom portal development.",
-                "recommendation": "Bid",
-                "win_prob": 90.0,
-                "score": 92.0
-            },
-            {
-                "number": "BA-2026-8819",
-                "title": "Corporate E-Learning Portal & Articulate Storyline Content Authoring",
-                "source_name": "BidAssist",
-                "org_name": "National Skill Development Corporation (NSDC)",
-                "budget": 3200000.0,
-                "country": "India",
-                "scope": "Custom Rise 360 and Articulate Storyline interactive module creation for skill certification programs and capacity building.",
-                "summary": "Corporate skill development tender focusing on authoring tools and SCORM compliance.",
-                "recommendation": "Bid",
-                "win_prob": 89.0,
-                "score": 89.5
-            },
-            {
-                "number": "NGO-RFP-2026-104",
-                "title": "Community Upskilling Portal & Interactive Video Content",
-                "source_name": "NGOBox",
-                "org_name": "NITI Aayog, Govt of India",
-                "budget": 1800000.0,
-                "country": "India",
-                "scope": "Development of mobile-first offline-capable learning app and video content in 8 regional languages.",
-                "summary": "Community digital education and upskilling training portal.",
-                "recommendation": "Consider",
-                "win_prob": 84.0,
-                "score": 86.0
-            },
-            {
-                "number": "DEVAID-2026-551",
-                "title": "International Vocational E-Learning & Faculty Training Program",
-                "source_name": "DevelopmentAid",
-                "org_name": "ADB DevelopmentAid Portal",
-                "budget": 950000.0,
-                "country": "Asia",
-                "scope": "Implementation of blended virtual learning LMS for vocational institutes and faculty development.",
-                "summary": "International development bank funded vocational training and LMS.",
-                "recommendation": "Bid",
-                "win_prob": 87.0,
-                "score": 88.0
-            },
-            {
-                "number": "CSR-2026-092",
-                "title": "Digital Saksharta Initiative - E-Content & Teacher Training",
-                "source_name": "CSRBOX",
-                "org_name": "Ministry of Education, Govt of India",
-                "budget": 2100000.0,
-                "country": "India",
-                "scope": "CSR funded initiative for digital literacy, teacher training portal, and NEP curriculum digitized modules.",
-                "summary": "CSR digital literacy initiative with teacher portal and content development.",
-                "recommendation": "Consider",
-                "win_prob": 85.0,
-                "score": 87.5
-            },
-            {
-                "number": "TT-2026-7731",
-                "title": "Campus Management & Academic ERP System Implementation",
-                "source_name": "TenderTiger",
-                "org_name": "Ministry of Education, Govt of India",
-                "budget": 5000000.0,
-                "country": "India",
-                "scope": "Implementation of student portal, learning analytics engine, and academic campus management ERP for 20 polytechnic institutes.",
-                "summary": "Higher education campus management and ERP software.",
-                "recommendation": "Consider",
-                "win_prob": 82.0,
-                "score": 85.0
-            },
-            {
-                "number": "DEVNET-2026-309",
-                "title": "Distance Learning Portal & SCORM Content Development",
-                "source_name": "DevNetJobs",
-                "org_name": "UNESCO / UNGM Secretariat",
-                "budget": 750000.0,
-                "country": "Global",
-                "scope": "Creation of SCORM 1.2 interactive modules and LMS portal for international development practitioners.",
-                "summary": "Global NGO distance learning and SCORM content creation.",
-                "recommendation": "Bid",
-                "win_prob": 89.0,
-                "score": 90.0
-            }
-        ]
-
-        for item in seeded_tenders:
-            existing = db.query(Tender).filter(Tender.tender_number == item["number"]).first()
-            src = sources.get(item["source_name"])
-            org = org_db_map.get(item["org_name"])
-
-            if not existing:
-                t = Tender(
-                    tender_number=item["number"],
-                    title=item["title"],
-                    organization_id=org.id if org else None,
-                    source_id=src.id if src else None,
-                    country=item["country"],
-                    sector="Education",
-                    budget=item["budget"],
-                    currency="INR" if item["country"] == "India" else "USD",
-                    publication_date=datetime.now(timezone.utc) - timedelta(days=1),
-                    submission_deadline=datetime.now(timezone.utc) + timedelta(days=20),
-                    status="Active",
-                    access_status="Verified",
-                    official_link=src.search_url if src else "https://gem.gov.in",
-                    scope_of_work=item["scope"],
-                    deliverables="1. Production Cloud System\n2. SCORM Content Packages\n3. Source Code & Docs",
-                    eligibility_criteria="Minimum 3 years experience in E-Learning, LMS, or EdTech software development.",
-                    technical_requirements="Moodle / React / Python LMS, SCORM 1.2/2004, Articulate Storyline / Rise 360 compatible.",
-                    financial_requirements="Positive net worth for last 3 financial years.",
-                    required_documents="1. Technical RFP Proposal\n2. Commercial Bid\n3. Certificate of Incorporation",
-                    ai_summary=item["summary"],
-                    risk_analysis="Standard execution risk with fixed 6-month deadline.",
-                    bid_recommendation=item["recommendation"],
-                    winning_probability=item["win_prob"],
-                    estimated_team="1 ID Lead, 3 Developers, 1 QA",
-                    estimated_duration="6 Months",
-                    keyword_score=item["score"],
-                    semantic_score=item["score"] - 1.0,
-                    ai_score=item["score"] + 1.0,
-                    priority_score=95.0,
-                    overall_match_score=item["score"]
-                )
-                db.add(t)
-                db.commit()
-
-                # Attachment
-                att = TenderAttachment(
-                    tender_id=t.id,
-                    file_name=f"RFP_Specification_{t.tender_number.replace('/', '_')}.pdf",
-                    file_type="PDF",
-                    file_path=f"./storage/rfp_{t.id}.pdf",
-                    file_size_bytes=1850000,
-                    parsed_content=f"Official RFP specifications for {t.title}. Scope: {t.scope_of_work}"
-                )
-                db.add(att)
-                db.commit()
-
-        print("Database seeding completed successfully for all 10 portals & 10 keyword groups!")
+        print("Database seeding completed successfully. Zero mocked tenders inserted!")
 
     finally:
         db.close()

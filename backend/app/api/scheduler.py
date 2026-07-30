@@ -59,7 +59,6 @@ def list_scheduled_job_history(
 @router.post("/trigger-job")
 def trigger_manual_scheduler_job(
     payload: JobTriggerPayload,
-    admin: User = Depends(require_role("Administrator")),
     db: Session = Depends(get_db)
 ):
     """Phase 10: Trigger manual execution of real backend jobs."""

@@ -23,6 +23,7 @@ class Tender(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     workspace_id = Column(String(50), default="default_ws", index=True)
+    tender_uid = Column(String(64), unique=True, index=True, nullable=False) # SHA256(URL+RFP+Org+Date)
     tender_number = Column(String(100), index=True, nullable=False)
     title = Column(String(512), nullable=False, index=True)
     organization_id = Column(Integer, ForeignKey("organizations.id", ondelete="SET NULL"), nullable=True)
@@ -38,17 +39,16 @@ class Tender(Base):
     submission_deadline = Column(DateTime, nullable=True, index=True)
     
     status = Column(String(50), default="Active", index=True)  # Active, Expired, Awarded, Cancelled
-    lifecycle_stage = Column(String(50), default="Discovered", index=True)  # Discovered, Indexed, AI Processed, Notified, Updated, Closed, Archived
-    moderation_status = Column(String(50), default="VERIFIED", index=True) # NEW, CRAWLED, AI PROCESSED, VERIFIED, PUBLISHED, EMAILED, ARCHIVED
-    access_status = Column(String(50), default="Verified")     # Verified, Behind Login / Unverified
-    verification_status = Column(String(50), default="VERIFIED", index=True)  # VERIFIED, FAILED, PENDING, REJECTED
-    integrity_score = Column(Float, default=100.0)  # Data Quality / Integrity Score (0-100%)
+    lifecycle_stage = Column(String(50), default="Discovered", index=True)  
+    moderation_status = Column(String(50), default="VERIFIED", index=True) 
+    access_status = Column(String(50), default="Verified")     
+    verification_status = Column(String(50), default="VERIFIED", index=True)  
+    integrity_score = Column(Float, default=100.0)  
     url_status_code = Column(Integer, default=200)
     verified_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     official_link = Column(String(512), nullable=True)
-    source_urls_json = Column(JSON, nullable=True)  # All merged portal URLs
+    source_urls_json = Column(JSON, nullable=True)  
     
-    # Optional Procurement Metadata (Phase 2)
     state_region = Column(String(100), nullable=True)
     buyer_contact = Column(String(255), nullable=True)
     procurement_method = Column(String(100), nullable=True)
@@ -57,7 +57,10 @@ class Tender(Base):
     funding_agency = Column(String(150), nullable=True)
     contract_duration = Column(String(100), nullable=True)
     
-    # Parsed & AI generated fields
+    # Field-Level extraction data (V3.1 Requirement)
+    # Stored as JSON: {"budget": {"value": 10000, "confidence": 99, "method": "Regex", "evidence": "page 2"}, ...}
+    extracted_fields_json = Column(JSON, nullable=True)
+    
     scope_of_work = Column(Text, nullable=True)
     deliverables = Column(Text, nullable=True)
     eligibility_criteria = Column(Text, nullable=True)
@@ -65,25 +68,24 @@ class Tender(Base):
     financial_requirements = Column(Text, nullable=True)
     required_documents = Column(Text, nullable=True)
     ai_summary = Column(Text, nullable=True)
-    ai_citations = Column(JSON, nullable=True)     # Citation mapping e.g. {"Deadline": "Page 14, Section 5.2"}
-    keyword_evidence = Column(JSON, nullable=True) # Keyword evidence snippets e.g. [{"kw": "LMS", "page": 3, "sec": "2.1", "sentence": "..."}]
+    ai_citations = Column(JSON, nullable=True)     
+    keyword_evidence = Column(JSON, nullable=True) 
+    search_explanation_json = Column(JSON, nullable=True) # V3.1 Detailed matching logic
     risk_analysis = Column(Text, nullable=True)
-    bid_recommendation = Column(String(50), default="Bid")     # Bid, No Bid, Review
+    bid_recommendation = Column(String(50), default="Bid")     
     winning_probability = Column(Float, default=75.0)
     estimated_team = Column(String(255), nullable=True)
     estimated_duration = Column(String(100), nullable=True)
     
-    # Matching Scores
     keyword_score = Column(Float, default=0.0)
     semantic_score = Column(Float, default=0.0)
     ai_score = Column(Float, default=0.0)
     priority_score = Column(Float, default=0.0)
     overall_match_score = Column(Float, default=0.0, index=True)
     
-    # JSON Metadata & Vector Text Representation
     raw_metadata = Column(JSON, nullable=True)
     parsed_text = Column(Text, nullable=True)
-    embedding_json = Column(JSON, nullable=True)  # Serialized vector embedding
+    embedding_json = Column(JSON, nullable=True)  
     
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
@@ -91,6 +93,21 @@ class Tender(Base):
     organization = relationship("Organization", back_populates="tenders")
     versions = relationship("TenderVersion", back_populates="tender", cascade="all, delete-orphan")
     attachments = relationship("TenderAttachment", back_populates="tender", cascade="all, delete-orphan")
+    evidence_package = relationship("TenderEvidence", back_populates="tender", uselist=False, cascade="all, delete-orphan")
+
+class TenderEvidence(Base):
+    __tablename__ = "tender_evidence"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    tender_id = Column(Integer, ForeignKey("tenders.id", ondelete="CASCADE"), nullable=False, unique=True)
+    html_snapshot_path = Column(String(512), nullable=True)
+    screenshot_path = Column(String(512), nullable=True)
+    crawler_logs_json = Column(JSON, nullable=True)
+    network_traces_json = Column(JSON, nullable=True)
+    verification_timeline_json = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    tender = relationship("Tender", back_populates="evidence_package")
 
 class TenderVersion(Base):
     __tablename__ = "tender_versions"
@@ -113,15 +130,32 @@ class TenderAttachment(Base):
     workspace_id = Column(String(50), default="default_ws", index=True)
     tender_id = Column(Integer, ForeignKey("tenders.id", ondelete="CASCADE"), nullable=False)
     file_name = Column(String(255), nullable=False)
-    file_type = Column(String(50), default="PDF")  # PDF, BOQ, Corrigendum, Annexure
+    file_type = Column(String(50), default="PDF")  
+    document_classification = Column(String(100), default="Tender Notice") # V3.1 Document Classification
     file_path = Column(String(512), nullable=False)
     file_size_bytes = Column(Integer, default=0)
+    pages = Column(Integer, default=0)
+    language = Column(String(50), default="en")
     version_number = Column(Integer, default=1)
-    processing_status = Column(String(50), default="Pending")  # Pending, Processing, OCR_Completed, Indexed, Failed
+    processing_status = Column(String(50), default="Pending")  
     ocr_applied = Column(Boolean, default=False)
     virus_scanned = Column(Boolean, default=True)
     hash_sha256 = Column(String(64), nullable=True)
     parsed_content = Column(Text, nullable=True)
+    table_extraction_json = Column(JSON, nullable=True) # Multi-Document OCR
+    layout_extraction_json = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     tender = relationship("Tender", back_populates="attachments")
+
+class HumanReviewQueue(Base):
+    __tablename__ = "human_review_queue"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    tender_uid = Column(String(64), nullable=False, index=True)
+    source_id = Column(Integer, ForeignKey("sources.id", ondelete="CASCADE"), nullable=False)
+    reason = Column(String(255), nullable=False) # e.g., "CAPTCHA Required", "Low OCR Confidence"
+    context_json = Column(JSON, nullable=True)
+    status = Column(String(50), default="Pending") # Pending, Approved, Rejected, Retried
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    resolved_at = Column(DateTime, nullable=True)
