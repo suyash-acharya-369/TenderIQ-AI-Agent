@@ -1,0 +1,4 @@
+Website Name,Website URL,Search URL,Connector Type,Country,Enabled,Priority,Capabilities JSON
+GeM Official,https://gem.gov.in,https://gem.gov.in/search,GeMConnector,India,TRUE,1,"{""Supports Search"": true, ""Captcha"": true}"
+UNGM,https://www.ungm.org,https://www.ungm.org/Public/Notice,UNGMConnector,Global,TRUE,2,"{""Supports Search"": true, ""Captcha"": false}"
+World Bank,https://projects.worldbank.org,https://projects.worldbank.org/en/projects-operations/procurement,WorldBankConnector,Global,TRUE,3,"{""Supports Search"": true, ""Captcha"": false}"

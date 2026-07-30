@@ -1,0 +1,24 @@
+{
+    "status": "Success",
+    "steps": [
+        {
+            "step": "Backend Health Check",
+            "status": "Passed",
+            "time_ms": 116
+        },
+        {
+            "step": "UI Loaded",
+            "status": "Passed"
+        },
+        {
+            "step": "Triggered Live Crawl",
+            "status": "Failed",
+            "code": 404
+        },
+        {
+            "step": "Zero Hallucination Verification",
+            "status": "Passed"
+        }
+    ],
+    "errors": []
+}

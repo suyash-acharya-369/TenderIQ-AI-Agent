@@ -77,8 +77,9 @@ async function fetchUnreadNotificationCount() {
 }
 
 function updateNotificationBadge(hasUnread) {
-    const bellBtns = document.querySelectorAll("button span[data-icon='notifications']");
+    const bellBtns = document.querySelectorAll("button .material-symbols-outlined");
     bellBtns.forEach(span => {
+        if(span.textContent.trim() !== 'notifications' && span.getAttribute('data-icon') !== 'notifications') return;
         const btn = span.parentElement;
         btn.classList.add("relative");
         if (hasUnread) {

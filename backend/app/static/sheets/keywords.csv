@@ -1,0 +1,3 @@
+Keyword Group,Boolean Search,Negative Keywords,Enabled,Priority Weight
+Digital Learning,"""E-learning"" OR ""LMS"" OR ""Learning Management System""",Construction,TRUE,1.5
+Software Development,"""Software"" OR ""App Development"" OR ""Web Application""",Hardware,TRUE,1.2
