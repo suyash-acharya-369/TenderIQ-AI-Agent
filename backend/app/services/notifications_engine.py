@@ -28,6 +28,21 @@ def evaluate_and_dispatch_notifications(tender: Tender, db: Session) -> int:
         logger.warning(f"Data Integrity Policy: Skipping notification for unverified tender {tender.tender_number} (status={tender.verification_status})")
         return 0
 
+    # V3.1 Zero Hallucination: Live Link Validation
+    # Never send an email if the link is broken
+    try:
+        import httpx
+        with httpx.Client(timeout=5.0, follow_redirects=True) as client:
+            res = client.head(tender.official_link)
+            if res.status_code in (405, 403): # Some servers block HEAD
+                res = client.get(tender.official_link)
+            if res.status_code >= 400:
+                logger.error(f"Live Link Validation Failed for {tender.tender_number} ({res.status_code}). Aborting notification.")
+                return 0
+    except Exception as e:
+        logger.error(f"Live Link Validation Exception for {tender.tender_number}: {e}. Aborting notification.")
+        return 0
+
     # Phase 20: Mark lifecycle stage
     tender.lifecycle_stage = "Notified"
     db.commit()
